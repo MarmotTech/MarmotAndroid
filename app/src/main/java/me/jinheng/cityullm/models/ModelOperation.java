@@ -152,14 +152,13 @@ public class ModelOperation {
             try {
                 boolean result = downloadFile(model.getModelUrl(), model.getModelLocalPath(), progress -> handler.post(() ->
                         textViewProgress.setText("" + progress + "%")));
-
-                handler.post(() -> {
-                    if (result) {
-                        textViewProgress.setText("Download completed");
-                    } else {
-                        textViewProgress.setText("Download failed");
-                    }
-                });
+//                handler.post(() -> {
+//                    if (result) {
+//                        textViewProgress.setText("Download completed");
+//                    } else {
+//                        textViewProgress.setText("Download failed");
+//                    }
+//                });
             } catch (Exception e) {
                 e.printStackTrace();
                 handler.post(() -> textViewProgress.setText("Download failed with exception"));

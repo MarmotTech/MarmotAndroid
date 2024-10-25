@@ -14,22 +14,13 @@ import java.io.IOException;
 
 import me.jinheng.cityullm.Message;
 import me.jinheng.cityullm.MessageAdapter;
+import me.jinheng.cityullm.newui.CustomChat;
 
 public class LLama {
 
     public static MessageAdapter messageAdapter;
 
-    public static Activity activity;
-
-    public static RecyclerView recyclerView;
-
-    public static TextView speedTextView;
-
-    public static ExtendedFloatingActionButton fab;
-
     public static Long id = 0L;
-
-    public static FileWriter historyWriter;
 
     public static boolean answering = false;
 
@@ -40,8 +31,6 @@ public class LLama {
     public static String input;
 
     public static Thread curThread;
-
-    public static HistoryLogger historyLogger;
 
     static {
         System.loadLibrary("llama-jni");
@@ -115,14 +104,7 @@ public class LLama {
 
     public static native void kill();
 
-    public static void init(String modelName, boolean enablePrefetch, MessageAdapter messageAdapter_, Activity activity_, RecyclerView recyclerView_, TextView speedTextView_, ExtendedFloatingActionButton fab_) throws IOException {
-        messageAdapter = messageAdapter_;
-        activity = activity_;
-        recyclerView = recyclerView_;
-        speedTextView = speedTextView_;
-        fab = fab_;
-//        historyWriter = new FileWriter(Config.historyPath + modelName, true);
-//        historyLogger = new HistoryLogger(historyFolder + modelName, CONSTANT.MAX_INIT_HISTORY_ITEM);
+    public static void init(String modelName, boolean enablePrefetch, CustomChat chat) throws IOException {
         ModelInfo mInfo = ModelOperation.modelName2modelInfo.get(modelName);
         float totalMemory = Utils.getTotalMemory() / CONSTANT.GB;
         float canUseMemory = Math.min(totalMemory, Config.maxMemorySize);
@@ -143,114 +125,33 @@ public class LLama {
             startChat(msg, mInfo.getModelLocalPath(), mInfo.getSystemPrompt(), Config.threadNum);
         }
 
-//        initRecord(recyclerView);
+        curThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                msg.reset();
+                String s = msg.waitForString();
 
-        curThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String output = "";
-                while (!Thread.currentThread().isInterrupted()) {
-                    msg.reset();
-                    String s = msg.waitForString();
-                    System.out.println(s);
-
-                    if (answerState == AnswerState.NO_MESSAGE_NEED_REPLY) {
-                        continue;
-                    } else if (answerState == AnswerState.MESSAGE_NEED_REPLY) {
-                        output = s;
-                        addMessageOnUI(s);
-                        answerState = AnswerState.ANSWERING;
-                        continue;
+                if (answerState == AnswerState.NO_MESSAGE_NEED_REPLY) {
+                    //
+                } else if (answerState == AnswerState.MESSAGE_NEED_REPLY) {
+                    answerState = AnswerState.ANSWERING;
+                    chat.botContinue(s);
+                } else {
+                    if (msg.isStart()) {
+                        chat.updateInfo(s);
+                        answerState = AnswerState.NO_MESSAGE_NEED_REPLY;
                     } else {
-                        if (msg.isStart()) {
-                            // START/END
-                            answerState = AnswerState.NO_MESSAGE_NEED_REPLY;
-//                            historyLogger.append2File(new HistoryItem(id, input, output));
-                            updateSpeedOnUI(s);
-                            updateClear();
-                        } else {
-                            output += s;
-                            updateMessageOnUI(output);
-                            updateStop();
-                        }
+                        chat.botContinue(s);
                     }
                 }
             }
         });
         curThread.start();
-
-    }
-
-    public static void updateSpeedOnUI(String time) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                speedTextView.setText(time);
-            }
-        });
-    }
-
-    public static void updateStop() {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fab.setText("STOP");
-            }
-        });
-    }
-
-    public static void updateClear() {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fab.setText("CLEAR");
-            }
-        });
     }
 
     public static void run(String input_) throws RuntimeException {
-        updateStop();
         input = input_;
         inputString(input);
         answerState = AnswerState.MESSAGE_NEED_REPLY;
-    }
-
-    public static void initRecord(RecyclerView recyclerView) throws IOException {
-        FixedSizeQueue<HistoryItem> queue = historyLogger.readItems();
-
-        HistoryItem historyItem;
-        while ((historyItem = queue.remove()) != null) {
-            Message msgSend = new Message(historyItem.getSend(), true);
-            Message msgRecv = new Message(historyItem.getReceive(), false);
-
-            messageAdapter.addMessage(msgSend);
-            messageAdapter.addMessage(msgRecv);
-            recyclerView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
-
-            id = historyItem.getId() + 1;
-        }
-    }
-
-    public static void addMessageOnUI(String msg) {
-        Message newMessage = new Message(msg, false);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                messageAdapter.addMessage(newMessage);
-                recyclerView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
-            }
-        });
-    }
-
-    public static void updateMessageOnUI(String msg) {
-        Message newMessage = new Message(msg, false);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                int finalIndex = messageAdapter.getItemCount() - 1;
-                messageAdapter.updateMessage(finalIndex, newMessage);
-            }
-        });
     }
 
     public static void destroy() {

@@ -95,7 +95,7 @@ class CustomChat : AppCompatActivity() {
             CustomApi.LoadingDialogUtils.show(this@CustomChat, "Loading Model...")
             Thread{
                 CustomApi.LoadingDialogUtils.dismiss()
-                LLama.init(modelName, false, null, null, null, null, null)
+                LLama.init(modelName, false, this@CustomChat)
             }.start()
         } catch (e: IOException) {
             e.printStackTrace();
@@ -158,7 +158,7 @@ class CustomChat : AppCompatActivity() {
         LLama.stop()
     }
 
-    private fun updateInfo(msg:String){
+    fun updateInfo(msg:String){
         runOnUiThread {
             info!!.text = msg;
         }
@@ -197,14 +197,14 @@ class CustomChat : AppCompatActivity() {
         refreshListview();
     }
 
-    private fun botContinue(msg: String){
+    fun botContinue(msg: String){
         runOnUiThread{
             currentBotChat!!.appendText(msg);
             refreshListview();
         }
     }
 
-    private fun botEnd() {
+    fun botEnd() {
         runOnUiThread {
             isBotTalking = false
             // history!!.add("A: $msg<|endoftext|>\n\n")
