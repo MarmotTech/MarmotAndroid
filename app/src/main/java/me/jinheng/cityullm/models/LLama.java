@@ -98,7 +98,7 @@ public class LLama {
 
     public static native void startChat(NativeMessageReceiver msg, String localModelPath, String systemPrompt, int threadNum);
 
-    private static native void startChatWPrefetch(NativeMessageReceiver msg, String localModelPath, String systemPrompt, int threadNum, float prefetchSizeInGB, float lSize);
+    private static native void startChatWPrefetch(NativeMessageReceiver msg, String localModelPath, String systemPrompt, int threadNum, float memSize);
 
     public static native void stop();
 
@@ -112,7 +112,7 @@ public class LLama {
 
         float prefetchSizeInGB = 0f;
         float kvCacheSizeInGB = 0f;
-        float lSize = 0f;
+        float memSize = 0f;
 
         if (canUseMemory <= modelSize) {
             prefetchSizeInGB = (float) mInfo.getPrefetchSize() / CONSTANT.GB;
@@ -120,7 +120,7 @@ public class LLama {
         }
 
         if (enablePrefetch) {
-            startChatWPrefetch(msg, mInfo.getModelLocalPath(), mInfo.getSystemPrompt(), Config.threadNum, prefetchSizeInGB, lSize);
+            startChatWPrefetch(msg, mInfo.getModelLocalPath(), mInfo.getSystemPrompt(), Config.threadNum, memSize);
         } else {
             startChat(msg, mInfo.getModelLocalPath(), mInfo.getSystemPrompt(), Config.threadNum);
         }
