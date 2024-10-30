@@ -86,15 +86,29 @@ public class LLama {
 
     public static native void inputString(String s);
 
-    public static native void startChat(NativeMessageReceiver msg, String localModelPath, String systemPrompt, int threadNum);
+    public static native void startChat(NativeMessageReceiver msg,
+                                        String localModelPath,
+                                        String systemPrompt,
+                                        int threadNum);
 
-    private static native void startChatWPrefetch(NativeMessageReceiver msg, String localModelPath, String systemPrompt, int threadNum, float memSize);
+    private static native void startChatWPrefetch(NativeMessageReceiver msg,
+                                                  String localModelPath,
+                                                  String systemPrompt,
+                                                  int threadNum,
+                                                  float prefetchSizeInGB,
+                                                  float lSize);
+
+    private static native void startChatWPrefetch(NativeMessageReceiver msg,
+                                                  String localModelPath,
+                                                  String systemPrompt,
+                                                  int threadNum,
+                                                  float memSize);
 
     public static native void stop();
 
     public static native void kill();
 
-    public static void init(String modelName, boolean enablePrefetch, CustomChat chat) throws IOException {
+    public static void init(String modelName, boolean enablePrefetch, CustomChat chat) {
         ModelInfo mInfo = ModelOperation.modelName2modelInfo.get(modelName);
         float totalMemory = Utils.getTotalMemory() / CONSTANT.GB;
         float canUseMemory = Math.min(totalMemory, Config.maxMemorySize);
@@ -109,11 +123,20 @@ public class LLama {
             kvCacheSizeInGB = (float) mInfo.getKvSize() / CONSTANT.GB;
         }
 
-        System.out.println("INIT: " + modelName + "\npath: " + mInfo.getModelLocalPath() + "\nprefetch: " + enablePrefetch);
+        // System.out.println("INIT: " + modelName + "\npath: " + mInfo.getModelLocalPath() + "\nprefetch: " + enablePrefetch);
         if (enablePrefetch) {
-            startChatWPrefetch(msg, mInfo.getModelLocalPath(), mInfo.getSystemPrompt(), Config.threadNum, memSize);
+            startChatWPrefetch(msg, mInfo.getModelLocalPath(),
+                    mInfo.getSystemPrompt(),
+                    Config.threadNum,
+                    memSize);
+//            startChatWPrefetch(msg, mInfo.getModelLocalPath(),
+//                    mInfo.getSystemPrompt(),
+//                    Config.threadNum,
+//                    0,0);
         } else {
-            startChat(msg, mInfo.getModelLocalPath(), mInfo.getSystemPrompt(), Config.threadNum);
+            startChat(msg, mInfo.getModelLocalPath(),
+                    mInfo.getSystemPrompt(),
+                    Config.threadNum);
         }
 
         curThread = new Thread(() -> {
