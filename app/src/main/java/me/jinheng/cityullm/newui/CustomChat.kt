@@ -13,15 +13,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import me.jinheng.cityullm.R
-import me.jinheng.cityullm.models.Config
 import me.jinheng.cityullm.models.LLama
-import me.jinheng.cityullm.models.ModelInfo
-import me.jinheng.cityullm.models.ModelOperation
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 
 class CustomChat : AppCompatActivity() {
     private var dataloaded = false
@@ -39,12 +32,12 @@ class CustomChat : AppCompatActivity() {
     private var delHistory: ImageView? = null
     private var mBackPressed: Long = 0
     private var info: TextView? = null
-    private var models: List<ModelInfo>? = null
     private var textViewModelName: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.custom_activity_chat)
+        CustomApi.setFullscreen(this@CustomChat)
         CustomApi.chatItems = ArrayList()
         selectedNum = intent.getIntExtra("Selected", 0)
         history = ArrayList()
@@ -82,20 +75,19 @@ class CustomChat : AppCompatActivity() {
             }
         }
         loadData()
-        textViewModelName!!.text = models!![selectedNum].modelName
+        textViewModelName!!.text = CustomApi.models!![selectedNum].modelName
         botEnd()
     }
 
     private fun loadData() {
-        models = ModelOperation.getAllSupportModels()
         try {
-            var modelName = models!![selectedNum].modelName
+            var modelName = CustomApi.models!![selectedNum].modelName
             Log.d("debug", modelName)
-            ModelOperation.downloadModelAsync(modelName, null)
+            // ModelOperation.downloadModelAsync(modelName, null)
             CustomApi.LoadingDialogUtils.show(this@CustomChat, "Loading Model...")
             Thread{
+                LLama.init(modelName, CustomApi.models!![selectedNum].enablePrefetch, this@CustomChat)
                 CustomApi.LoadingDialogUtils.dismiss()
-                LLama.init(modelName, false, this@CustomChat)
             }.start()
         } catch (e: IOException) {
             e.printStackTrace();
@@ -124,7 +116,7 @@ class CustomChat : AppCompatActivity() {
         val view = View.inflate(this, R.layout.custom_layout_help, null)
         b.setView(view)
         b.setNegativeButton(
-            "已  阅"
+            "OK"
         ) { dialog: DialogInterface, which: Int -> dialog.dismiss() }
         b.show()
     }
@@ -145,12 +137,12 @@ class CustomChat : AppCompatActivity() {
         val view = View.inflate(this, R.layout.custom_layout_config, null)
         // initConfigs(view);
         builder.setView(view)
-        builder.setTitle("设置")
+        builder.setTitle("Setting")
         builder.setNegativeButton(
-            "取 消"
+            "Cancel"
         ) { dialog: DialogInterface, which: Int -> dialog.dismiss() }
         builder.setPositiveButton(
-            "确 定"
+            "OK"
         ) { dialog: DialogInterface?, which: Int -> }.show()
     }
 
@@ -169,7 +161,7 @@ class CustomChat : AppCompatActivity() {
             finish()
             super.onBackPressed()
         } else {
-            CustomApi.showMsg(this, "连续返回两次退出APP")
+            CustomApi.showMsg(this, "Return twice to exit APP")
             mBackPressed = System.currentTimeMillis()
         }
     }
@@ -193,6 +185,7 @@ class CustomChat : AppCompatActivity() {
 
     private fun botBegin(){
         isBotTalking = true;
+        input!!.isClickable = false
         CustomApi.chatItems!!.add(currentBotChat!!);
         refreshListview();
     }
@@ -211,6 +204,7 @@ class CustomChat : AppCompatActivity() {
             currentBotChat = ChatItem()
             currentBotChat!!.type = 0
             currentBotChat!!.text = "\t\t"
+            input!!.isClickable = true
             refreshListview()
         }
     }

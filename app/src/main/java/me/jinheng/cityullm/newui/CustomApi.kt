@@ -1,38 +1,27 @@
 package me.jinheng.cityullm.newui
 
-import me.jinheng.cityullm.R
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.AssetManager
 import android.content.res.Configuration
 import android.graphics.Color
-import android.os.Build
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import me.jinheng.cityullm.R
+import me.jinheng.cityullm.models.ModelOperation
 import java.lang.ref.WeakReference
-import java.util.Objects
 
 object CustomApi {
+    var models = ModelOperation.getAllSupportModels()
     private var toast: Toast? = null
     var chatItems: ArrayList<ChatItem>? = null
-    var sharedPreferences: SharedPreferences? = null
-    var RequestTimeout: Long = 3600
-    var max_token: Int = 1000
-    var max_history: Int = 30
-    var temperature: Double = 0.5
-    var model: String = "text-davinci-003"
-    var use_vps: String = "None"
-    var stream: Boolean = true
 
     fun showMsg(ct: Context?, s: String?) {
         Thread {
@@ -61,7 +50,25 @@ object CustomApi {
             }
         }.start()
     }
-
+    fun setFullscreen(activity: AppCompatActivity) {
+        activity.supportActionBar?.hide()
+        if (activity.resources.configuration.orientation ==
+            Configuration.ORIENTATION_LANDSCAPE
+        ) {
+            val lp = activity.window.attributes
+            lp.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+        activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        val _window: Window = activity.window
+        val params: WindowManager.LayoutParams = _window.attributes
+        params.systemUiVisibility =
+            (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        _window.attributes = params
+        activity.window.statusBarColor = Color.TRANSPARENT
+    }
     object LoadingDialogUtils {
         private var loadingDialog: AlertDialog? = null
         private var reference: WeakReference<Activity?>? = null

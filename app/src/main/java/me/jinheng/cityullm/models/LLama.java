@@ -1,18 +1,8 @@
 package me.jinheng.cityullm.models;
 
-import android.app.Activity;
 import android.util.Log;
-import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-
-import me.jinheng.cityullm.Message;
 import me.jinheng.cityullm.MessageAdapter;
 import me.jinheng.cityullm.newui.CustomChat;
 
@@ -119,6 +109,7 @@ public class LLama {
             kvCacheSizeInGB = (float) mInfo.getKvSize() / CONSTANT.GB;
         }
 
+        System.out.println("INIT: " + modelName + "\npath: " + mInfo.getModelLocalPath() + "\nprefetch: " + enablePrefetch);
         if (enablePrefetch) {
             startChatWPrefetch(msg, mInfo.getModelLocalPath(), mInfo.getSystemPrompt(), Config.threadNum, prefetchSizeInGB, lSize);
         } else {

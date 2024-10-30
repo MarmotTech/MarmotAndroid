@@ -2,6 +2,8 @@ package me.jinheng.cityullm.models;
 
 public class ModelInfo {
 
+    public Boolean enablePrefetch = false;
+
     private String modelName;
 
     private String modelUrl;

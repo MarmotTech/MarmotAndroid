@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_margin="10dp"
-    tools:context=".CustomChat.CustomChat">
+    android:background="@color/white"
+    android:padding="10dp"
+    tools:context=".newui.CustomChat">
     <LinearLayout
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"

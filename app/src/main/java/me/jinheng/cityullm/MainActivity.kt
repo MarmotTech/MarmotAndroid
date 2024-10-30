@@ -3,36 +3,25 @@ package me.jinheng.cityullm
 import android.content.Intent
 import android.content.res.AssetManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import com.google.android.material.navigation.NavigationView
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import me.jinheng.cityullm.newui.CustomChat
-import me.jinheng.cityullm.databinding.ActivityMainBinding
 import me.jinheng.cityullm.databinding.CustomActivityMainBinding
 import me.jinheng.cityullm.models.Config
 import me.jinheng.cityullm.models.LLama
 import me.jinheng.cityullm.models.ModelOperation
-import me.jinheng.cityullm.ui.home.HomeViewModel
+import me.jinheng.cityullm.newui.CustomApi
+import me.jinheng.cityullm.newui.ModelItemAdapter
+import me.jinheng.cityullm.newui.ModelListPage
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,31 +45,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        CustomApi.setFullscreen(this@MainActivity)
+        binding = CustomActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.btmMainCustomChat.setOnClickListener{
+            startActivity(Intent(this@MainActivity, ModelListPage::class.java))
+            // showModels()
+        }
         LLama.initFolder(getExternalFilesDir(null))
-        ModelOperation.updateModels()
+        CustomApi.LoadingDialogUtils.show(this, "LOADING")
         try {
-            val initialModelName = "ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf"
-            val modelInfoName = "models.json"
-            val assetManager = assets
-            val file = assetManager.list("")
-            if (file?.contains(initialModelName) == true) {
-                copyFileFromAssets(assetManager, initialModelName, Config.modelPath)
-            }
-            if (file?.contains(modelInfoName) == true) {
-                copyFileFromAssets(assetManager, modelInfoName, Config.modelPath)
-            }
+            Thread{
+                val initialModelName = "ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf"
+                val modelInfoName = "models.json"
+                val assetManager = assets
+                val file = assetManager.list("")
+                if (file?.contains(initialModelName) == true) {
+                    copyFileFromAssets(assetManager, initialModelName, Config.modelPath)
+                }
+                if (file?.contains(modelInfoName) == true) {
+                    copyFileFromAssets(assetManager, modelInfoName, Config.modelPath)
+                }
+                ModelOperation.updateModels()
+                CustomApi.models = ModelOperation.getAllSupportModels()
+                CustomApi.LoadingDialogUtils.dismiss()
+                // showModels()
+            }.start()
         } catch (e: IOException) {
             e.printStackTrace();
         }
         if (!LLama.hasInitialModel()) {
             showDownloadDialog()
-        }
-        super.onCreate(savedInstanceState)
-
-        binding = CustomActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.btmMainCustomChat.setOnClickListener{
-            showModels()
         }
     }
 
@@ -91,19 +87,22 @@ class MainActivity : AppCompatActivity() {
         var modelListview = view.findViewById<ListView>(R.id.listview_models)
         var models = ModelOperation.getAllSupportModels()
         if (models.isNotEmpty()) {
-            val mainInfo = arrayOfNulls<String>(models.size)
-            for (i in 0 until models.size) {
-                mainInfo[i] = "\t\tModel name: ${models[i].modelName}\n\t\tModel size:${models[i].modelSize}\n\n"
-            }
-            modelListview.adapter =
-                ArrayAdapter(this@MainActivity, R.layout.custom_listview_item, mainInfo)
+//            val mainInfo = arrayOfNulls<String>(models.size)
+//            for (i in 0 until models.size) {
+//                mainInfo[i] = "\t\tModel name: ${models[i].modelName}\n\t\tModel size:${models[i].modelSize}\n\n"
+//            }
+            // modelListview.adapter = ArrayAdapter(this@MainActivity, R.layout.custom_listview_item, mainInfo)
+            modelListview.adapter = ModelItemAdapter(this@MainActivity)
             modelListview.onItemClickListener =
-                AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, i: Int, _: Long ->
+                AdapterView.OnItemClickListener { _: AdapterView<*>?, view1: View?, i: Int, _: Long ->
                     val it = Intent(
                         this@MainActivity,
                         CustomChat::class.java
                     )
+                    val tag = view1!!.tag as ModelItemAdapter.ViewHolder
                     it.putExtra("Selected", i)
+                    it.putExtra("Prefetch", tag.prefetch)
+                    println("Prefetch: ${tag.prefetch}")
                     this@MainActivity.startActivity(it)
                 }
         }
