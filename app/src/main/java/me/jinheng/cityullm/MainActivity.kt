@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: CustomActivityMainBinding
 
     private fun copyFileFromAssets(assetManager: AssetManager, initialModelName: String, modelDir: String): Boolean {
+        println("Copy")
+        println(initialModelName)
         return try {
             val inputStream = assetManager.open(initialModelName)
             val outFile = File(modelDir + initialModelName)
@@ -51,31 +53,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.btmMainCustomChat.setOnClickListener{
             startActivity(Intent(this@MainActivity, ModelListPage::class.java))
-            // showModels()
+//             showModels()
         }
         LLama.initFolder(getExternalFilesDir(null))
         CustomApi.LoadingDialogUtils.show(this, "LOADING")
         try {
-            Thread{
-                val initialModelName = "ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf"
-                val modelInfoName = "models.json"
-                val assetManager = assets
-                val file = assetManager.list("")
-                if (file?.contains(initialModelName) == true) {
-                    copyFileFromAssets(assetManager, initialModelName, Config.modelPath)
-                }
-                if (file?.contains(modelInfoName) == true) {
-                    copyFileFromAssets(assetManager, modelInfoName, Config.modelPath)
-                }
-                ModelOperation.updateModels()
-                CustomApi.models = ModelOperation.getAllSupportModels()
-                CustomApi.LoadingDialogUtils.dismiss()
-                // showModels()
-            }.start()
+            val initialModelName = "ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf"
+            val modelInfoName = "models.json"
+            val assetManager = assets
+            val file = assetManager.list("")
+            if (file?.contains(initialModelName) == true) {
+                copyFileFromAssets(assetManager, initialModelName, Config.modelPath)
+            }
+            if (file?.contains(modelInfoName) == true) {
+                copyFileFromAssets(assetManager, modelInfoName, Config.modelPath)
+            }
+            ModelOperation.updateModels()
+            CustomApi.models = ModelOperation.getAllSupportModels()
+            CustomApi.LoadingDialogUtils.dismiss()
+            // showModels()
         } catch (e: IOException) {
             e.printStackTrace();
         }
-        if (!LLama.hasInitialModel()) {
+        if (LLama.hasNoInitialModel()) {
             showDownloadDialog()
         }
     }

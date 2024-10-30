@@ -68,20 +68,20 @@ public class LLama {
         }
     }
 
-    public static boolean hasInitialModel() {
+    public static boolean hasNoInitialModel() {
         File modelFolder = new File(Config.modelPath);
         if (modelFolder.exists()) {
             File[] files = modelFolder.listFiles();
             for (File f : files) {
                 if (f.getName().endsWith(".gguf")) {
                     Log.d("debug", "Find initial model " + f.getAbsolutePath());
-                    return true;
+                    return false;
                 }
             }
         } else {
             Log.d("debug", modelFolder.getAbsolutePath() + " does not exist");
         }
-        return false;
+        return true;
     }
 
     public static native void inputString(String s);
