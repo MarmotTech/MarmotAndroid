@@ -72,7 +72,8 @@ class Model:
     def __init__(self, dir_model: Path, ftype: gguf.LlamaFileType, fname_out: Path, is_big_endian: bool = False,
                  use_temp_file: bool = False, eager: bool = False,
                  metadata_override: Path | None = None, model_name: str | None = None,
-                 split_max_tensors: int = 0, split_max_size: int = 0, dry_run: bool = False, small_first_shard: bool = False):
+                 split_max_tensors: int = 0, split_max_size: int = 0, dry_run: bool = False, small_first_shard: bool = False,
+                 alignment: int = gguf.GGUF_DEFAULT_ALIGNMENT, sort_tensors: bool = False):
         if type(self) is Model:
             raise TypeError(f"{type(self).__name__!r} should not be directly instantiated")
 
@@ -108,7 +109,9 @@ class Model:
 
         # Configure GGUF Writer
         self.gguf_writer = gguf.GGUFWriter(path=None, arch=gguf.MODEL_ARCH_NAMES[self.model_arch], endianess=self.endianess, use_temp_file=self.use_temp_file,
-                                           split_max_tensors=split_max_tensors, split_max_size=split_max_size, dry_run=dry_run, small_first_shard=small_first_shard)
+                                           split_max_tensors=split_max_tensors, split_max_size=split_max_size, dry_run=dry_run, small_first_shard=small_first_shard,
+                                           alignment=alignment)
+        self.sort_tensors = sort_tensors
 
     @classmethod
     def __init_subclass__(cls):
@@ -276,7 +279,14 @@ class Model:
     def prepare_tensors(self):
         max_name_len = max(len(s) for _, s in self.tensor_map.mapping.values()) + len(".weight,")
 
-        for name, data_torch in chain(self.generate_extra_tensors(), self.get_tensors()):
+        all_tensors = list(self.generate_extra_tensors()) + list(self.get_tensors())
+        all_tensors = list(filter(lambda x: not x[0].endswith((".attention.masked_bias", ".attention.bias", ".rotary_emb.inv_freq")), all_tensors))
+        if self.sort_tensors:
+            if "get_tensor_order" not in dir(self):
+                raise NotImplementedError("get_tensor_order() is not implemented")
+            all_tensors.sort(key=lambda x: self.get_tensor_order(x[0]))
+            
+        for name, data_torch in all_tensors:
             # we don't need these
             if name.endswith((".attention.masked_bias", ".attention.bias", ".rotary_emb.inv_freq")):
                 continue
@@ -1648,6 +1658,20 @@ class LlamaModel(Model):
                         rope_factors.append(1 / ((1 - smooth) / factor + smooth))
 
                 yield (self.format_tensor_name(gguf.MODEL_TENSOR.ROPE_FREQS), torch.tensor(rope_factors, dtype=torch.float32))
+
+    def get_tensor_order(self, name: str) -> int:
+        n_layers = int(self.find_hparam(["num_hidden_layers", "n_layer"]))
+        name_items = name.split('.')
+        if name_items[0] == "model" and name_items[1] == "layers":
+            return int(name_items[2]) + 1
+        elif name_items[0] == "model" and name_items[1] == "norm":
+            return n_layers + 1
+        elif name_items[0] == "model" and name_items[1] == "embed_tokens":
+            return 0
+        elif name_items[0] == "lm_head":
+            return n_layers + 2
+        else:
+            raise ValueError(f"Unexpected tensor name: {name}")
 
     def prepare_tensors(self):
         super().prepare_tensors()
@@ -4337,6 +4361,14 @@ def parse_args() -> argparse.Namespace:
         "--metadata", type=Path,
         help="Specify the path for an authorship metadata override file"
     )
+    parser.add_argument(
+        "--alignment", type=int,
+        help="Specify the alignment for the output file"
+    )
+    parser.add_argument(
+        "--do_sort", action="store_true",
+        help="Sort the tensors in the output file"
+    )
 
     return parser.parse_args()
 
@@ -4413,7 +4445,8 @@ def main() -> None:
                                      metadata_override=args.metadata, model_name=args.model_name,
                                      split_max_tensors=args.split_max_tensors,
                                      split_max_size=split_str_to_n_bytes(args.split_max_size), dry_run=args.dry_run,
-                                     small_first_shard=args.no_tensor_first_split)
+                                     small_first_shard=args.no_tensor_first_split,
+                                     alignment=args.alignment, sort_tensors=args.do_sort)
 
         if args.vocab_only:
             logger.info("Exporting model vocab...")
