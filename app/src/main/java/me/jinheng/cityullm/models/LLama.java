@@ -123,7 +123,7 @@ public class LLama {
             kvCacheSizeInGB = (float) mInfo.getKvSize() / CONSTANT.GB;
         }
 
-        // System.out.println("INIT: " + modelName + "\npath: " + mInfo.getModelLocalPath() + "\nprefetch: " + enablePrefetch);
+        System.out.println("INIT: " + modelName + "\npath: " + mInfo.getModelLocalPath() + "\nprefetch: " + enablePrefetch);
         if (enablePrefetch) {
             startChatWPrefetch(msg, mInfo.getModelLocalPath(),
                     mInfo.getSystemPrompt(),
@@ -138,7 +138,7 @@ public class LLama {
                     mInfo.getSystemPrompt(),
                     Config.threadNum);
         }
-
+        System.out.println("Start thread to receive new strings");
         curThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 msg.reset();

@@ -1,5 +1,9 @@
 package me.jinheng.cityullm.models;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
 public class ModelInfo {
 
     public Boolean enablePrefetch = false;
@@ -17,6 +21,11 @@ public class ModelInfo {
     private long prefetchSize = 0;
 
     private String systemPrompt = "";
+    private JSONArray tasks;
+
+    public JSONArray getTasks() {
+        return tasks;
+    }
 
     public String getModelName() { return modelName; }
 

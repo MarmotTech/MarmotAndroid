@@ -18,8 +18,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import org.apache.commons.io.FileUtils;
+
+import me.jinheng.cityullm.newui.CustomApi;
 
 public class ModelOperation {
 
@@ -106,9 +110,9 @@ public class ModelOperation {
             try {
                 String content = FileUtils.readFileToString(localFile, "utf-8");
                 List<ModelInfo> models = JSON.parseArray(content, ModelInfo.class);
-
                 modelName2modelInfo.clear();
                 for (ModelInfo info : models) {
+                    CustomApi.INSTANCE.setBenchmarkTasksJson(info.getTasks().toJSONString());
                     info.setModelLocalPath(Config.modelPath + info.getModelLocalPath());
                     modelName2modelInfo.put(info.getModelName(), info);
                 }

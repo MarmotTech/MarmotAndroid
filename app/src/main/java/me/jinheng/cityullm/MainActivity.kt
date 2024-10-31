@@ -17,7 +17,7 @@ import me.jinheng.cityullm.models.Config
 import me.jinheng.cityullm.models.LLama
 import me.jinheng.cityullm.models.ModelOperation
 import me.jinheng.cityullm.newui.CustomApi
-import me.jinheng.cityullm.newui.ModelItemAdapter
+import me.jinheng.cityullm.newui.ModelPageItemAdapter
 import me.jinheng.cityullm.newui.ModelListPage
 import java.io.File
 import java.io.FileOutputStream
@@ -29,8 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: CustomActivityMainBinding
 
     private fun copyFileFromAssets(assetManager: AssetManager, initialModelName: String, modelDir: String): Boolean {
-        println("Copy")
-        println(initialModelName)
+        println("Copy: $initialModelName")
         return try {
             val inputStream = assetManager.open(initialModelName)
             val outFile = File(modelDir + initialModelName)
@@ -51,6 +50,11 @@ class MainActivity : AppCompatActivity() {
         CustomApi.setFullscreen(this@MainActivity)
         binding = CustomActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.btmMainCustomBenchmark.setOnClickListener {
+            val it = Intent(this@MainActivity, ModelListPage::class.java)
+            it.putExtra("Chat", false)
+            startActivity(it)
+        }
         binding.btmMainCustomChat.setOnClickListener{
             startActivity(Intent(this@MainActivity, ModelListPage::class.java))
 //             showModels()
@@ -58,25 +62,27 @@ class MainActivity : AppCompatActivity() {
         LLama.initFolder(getExternalFilesDir(null))
         CustomApi.LoadingDialogUtils.show(this, "LOADING")
         try {
-            val initialModelName = "ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf"
-            val modelInfoName = "models.json"
-            val assetManager = assets
-            val file = assetManager.list("")
-            if (file?.contains(initialModelName) == true) {
-                copyFileFromAssets(assetManager, initialModelName, Config.modelPath)
-            }
-            if (file?.contains(modelInfoName) == true) {
-                copyFileFromAssets(assetManager, modelInfoName, Config.modelPath)
-            }
-            ModelOperation.updateModels()
-            CustomApi.models = ModelOperation.getAllSupportModels()
-            CustomApi.LoadingDialogUtils.dismiss()
+            Thread{
+                val initialModelName = "ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf"
+                val modelInfoName = "models.json"
+                val assetManager = assets
+                val file = assetManager.list("")
+                if (file?.contains(initialModelName) == true) {
+                    copyFileFromAssets(assetManager, initialModelName, Config.modelPath)
+                }
+                if (file?.contains(modelInfoName) == true) {
+                    copyFileFromAssets(assetManager, modelInfoName, Config.modelPath)
+                }
+                ModelOperation.updateModels()
+                CustomApi.models = ModelOperation.getAllSupportModels()
+                CustomApi.LoadingDialogUtils.dismiss()
+                if (LLama.hasNoInitialModel()) {
+                    showDownloadDialog()
+                }
+            }.start()
             // showModels()
         } catch (e: IOException) {
             e.printStackTrace();
-        }
-        if (LLama.hasNoInitialModel()) {
-            showDownloadDialog()
         }
     }
 
@@ -92,14 +98,14 @@ class MainActivity : AppCompatActivity() {
 //                mainInfo[i] = "\t\tModel name: ${models[i].modelName}\n\t\tModel size:${models[i].modelSize}\n\n"
 //            }
             // modelListview.adapter = ArrayAdapter(this@MainActivity, R.layout.custom_listview_item, mainInfo)
-            modelListview.adapter = ModelItemAdapter(this@MainActivity)
+            modelListview.adapter = ModelPageItemAdapter(this@MainActivity, true)
             modelListview.onItemClickListener =
                 AdapterView.OnItemClickListener { _: AdapterView<*>?, view1: View?, i: Int, _: Long ->
                     val it = Intent(
                         this@MainActivity,
                         CustomChat::class.java
                     )
-                    val tag = view1!!.tag as ModelItemAdapter.ViewHolder
+                    val tag = view1!!.tag as ModelPageItemAdapter.ViewHolder
                     it.putExtra("Selected", i)
                     it.putExtra("Prefetch", tag.prefetch)
                     println("Prefetch: ${tag.prefetch}")

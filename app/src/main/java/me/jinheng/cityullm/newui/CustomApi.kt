@@ -15,11 +15,15 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import me.jinheng.cityullm.R
+import me.jinheng.cityullm.models.BenchmarkTask
+import me.jinheng.cityullm.models.ModelInfo
 import me.jinheng.cityullm.models.ModelOperation
 import java.lang.ref.WeakReference
 
 object CustomApi {
-    var models = ModelOperation.getAllSupportModels()
+    var models: MutableList<ModelInfo> = ModelOperation.getAllSupportModels()
+    var benchmarkTasksJson:String = ""
+    var benchmarkTasks: MutableList<BenchmarkTask> = ArrayList()
     private var toast: Toast? = null
     var chatItems: ArrayList<ChatItem>? = null
 
