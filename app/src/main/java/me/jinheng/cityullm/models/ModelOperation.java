@@ -112,7 +112,9 @@ public class ModelOperation {
                 List<ModelInfo> models = JSON.parseArray(content, ModelInfo.class);
                 modelName2modelInfo.clear();
                 for (ModelInfo info : models) {
-                    CustomApi.INSTANCE.setBenchmarkTasksJson(info.getTasks().toJSONString());
+                    if (info.getTasks()!=null){
+                        CustomApi.INSTANCE.setBenchmarkTasksJson(info.getTasks().toJSONString());
+                    }
                     info.setModelLocalPath(Config.modelPath + info.getModelLocalPath());
                     modelName2modelInfo.put(info.getModelName(), info);
                 }

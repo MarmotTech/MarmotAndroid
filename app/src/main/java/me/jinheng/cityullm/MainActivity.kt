@@ -77,7 +77,9 @@ class MainActivity : AppCompatActivity() {
                 CustomApi.models = ModelOperation.getAllSupportModels()
                 CustomApi.LoadingDialogUtils.dismiss()
                 if (LLama.hasNoInitialModel()) {
-                    showDownloadDialog()
+                    runOnUiThread {
+                        showDownloadDialog()
+                    }
                 }
             }.start()
             // showModels()
