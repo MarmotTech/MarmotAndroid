@@ -8,6 +8,9 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +26,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: CustomActivityMainBinding
@@ -47,20 +50,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        CustomApi.setFullscreen(this@MainActivity)
-        binding = CustomActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.btmMainCustomBenchmark.setOnClickListener {
-            val it = Intent(this@MainActivity, ModelListPage::class.java)
-            it.putExtra("Chat", false)
-            startActivity(it)
-        }
-        binding.btmMainCustomChat.setOnClickListener{
-            startActivity(Intent(this@MainActivity, ModelListPage::class.java))
-//             showModels()
-        }
+
+        enableEdgeToEdge()
+
+//        binding.btmMainCustomBenchmark.setOnClickListener {
+//            val it = Intent(this@MainActivity, ModelListPage::class.java)
+//            it.putExtra("Chat", false)
+//            startActivity(it)
+//        }
+//        binding.btmMainCustomChat.setOnClickListener{
+//            startActivity(Intent(this@MainActivity, ModelListPage::class.java))
+////             showModels()
+//        }
         LLama.initFolder(getExternalFilesDir(null))
         CustomApi.LoadingDialogUtils.show(this, "LOADING")
+
         try {
             Thread{
                 val initialModelName = "ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf"
@@ -85,6 +89,10 @@ class MainActivity : AppCompatActivity() {
             // showModels()
         } catch (e: IOException) {
             e.printStackTrace();
+        }
+
+        setContent {
+            WelcomeScreen()
         }
     }
 
