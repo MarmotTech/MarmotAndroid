@@ -1,5 +1,6 @@
 package me.jinheng.cityullm.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -94,12 +95,19 @@ fun ChatScreen(modelInfo: ModelInfo) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(64.dp, 64.dp)
                     .clip(CircleShape)
                     .background(colorResource(R.color.tertiaryColor))
             ) {
-
+                Image(
+                    painter = painterResource(id = R.drawable.tinyllama_icon),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                )
             }
 
             Text(

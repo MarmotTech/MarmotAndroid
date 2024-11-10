@@ -54,6 +54,7 @@ object LLama {
         }
 
         val historyFolder = File(llamaFolder, "history")
+        println("modelPath: ${modelFolder.absolutePath}")
         Config.historyPath = historyFolder.absolutePath + "/"
         if (!historyFolder.exists()) {
             historyFolder.mkdirs()
