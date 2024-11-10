@@ -2,8 +2,6 @@ package me.jinheng.cityullm;
 
 import org.junit.Test;
 
-import me.jinheng.cityullm.models.Utils;
-
 public class TestUtils {
 
     @Test

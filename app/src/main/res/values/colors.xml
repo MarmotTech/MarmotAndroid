@@ -21,4 +21,6 @@
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
     <color name="mainColor">#0A71FF</color>
+    <color name="secondaryColor">#242424</color>
+    <color name="tertiaryColor">#EFF1F6</color>
 </resources>

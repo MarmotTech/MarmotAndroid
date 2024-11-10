@@ -4,22 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import me.jinheng.cityullm.screens.ChatScreen
-import me.jinheng.cityullm.utils.ModelOperations
+import me.jinheng.cityullm.screens.ModelsScreen
 
-class ChatActivity: ComponentActivity() {
+class ModelsActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val modelName = intent.getStringExtra("modelName")!!
-        val modelInfo = ModelOperations.modelName2modelInfo[modelName]
 
         enableEdgeToEdge()
 
         setContent {
-            ChatScreen(
-                modelInfo = modelInfo!!
-            )
+            ModelsScreen()
         }
     }
 }

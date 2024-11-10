@@ -1,8 +1,8 @@
 [versions]
 agp = "8.7.2"
 appcompat = "1.7.0"
-fastjson = "1.2.83"
 firebaseInappmessaging = "21.0.1"
+gson = "2.11.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -16,14 +16,17 @@ navigationUiKtx = "2.8.3"
 navigationFragmentKtx = "2.8.3"
 oshiCore = "6.6.0"
 physicsLayout = "0.4.1"
+firebaseCrashlyticsBuildtools = "3.0.2"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
-fastjson = { module = "com.alibaba:fastjson", version.ref = "fastjson" }
 firebase-inappmessaging = { module = "com.google.firebase:firebase-inappmessaging", version.ref = "firebaseInappmessaging" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -40,6 +43,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 physics-layout = { module = "io.github.klassenkonstantin:physics-layout", version.ref = "physicsLayout" }
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshiCore" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
