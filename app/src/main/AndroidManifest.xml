@@ -17,13 +17,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CityULLM"
         tools:targetApi="31">
-        <activity
-            android:name=".newui.ModelListPage"
-            android:exported="false" />
+
+        <activity android:name=".ModelsActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
+        <activity android:name=".ChatActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".MenuActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.CityULLM.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,14 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ChatActivity"
-            android:exported="false" />
-        <activity android:name=".SettingsActivity" />
-        <activity
-            android:name=".newui.CustomChat"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>

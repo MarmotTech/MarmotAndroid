@@ -3,3 +3,4 @@
 .DS_Store
 *.gguf
 *.json
+local.properties
