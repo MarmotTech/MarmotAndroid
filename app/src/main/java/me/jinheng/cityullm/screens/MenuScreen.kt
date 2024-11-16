@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.jinheng.cityullm.R
 import me.jinheng.cityullm.ModelsActivity
+import me.jinheng.cityullm.models.BenchmarkTask
+import me.jinheng.cityullm.models.LLama
 import me.jinheng.cityullm.ui.MenuCard
 
 @Composable
@@ -100,7 +102,16 @@ fun MenuScreen() {
                 description = "Help us collect statistics for different devices",
                 buttonText = "Start Benchmarking",
                 containerColor = colorResource(R.color.secondaryColor),
-                onStartClick = {},
+                onStartClick = {
+                    // TODO: Screen for selecting tasks and models
+                    LLama.startBenchmark(
+                        modelName = "tinyllama-1.1b-chat-v1.0",
+                        tasks = arrayOf(
+                            BenchmarkTask("103", "wikitext103"),
+                            BenchmarkTask("2","wikitext2")
+                        )
+                    )
+                },
                 buttonColors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(R.color.mainColor),
                     contentColor = Color.White
