@@ -1,11 +1,11 @@
 package me.jinheng.cityullm.models
 
 import android.util.Log
+import java.io.File
+import kotlin.math.min
 import me.jinheng.cityullm.utils.ModelOperations
 import me.jinheng.cityullm.utils.NativeMessageReceiver
 import me.jinheng.cityullm.utils.getTotalMemory
-import java.io.File
-import kotlin.math.min
 
 object LLama {
     var id: Long = 0L
@@ -83,41 +83,72 @@ object LLama {
         return true
     }
 
-    external fun inputString(s: String?)
+    private external fun inputString(s: String?)
 
-    external fun startChat(
+    private external fun startChat(
+            msg: NativeMessageReceiver?,
+            localModelPath: String?,
+            systemPrompt: String?,
+            threadNum: Int
+    )
+
+    private external fun benchmark(
         msg: NativeMessageReceiver?,
-        localModelPath: String?,
-        systemPrompt: String?,
-        threadNum: Int
+        localModelPath: String,
+        threadNum: Int,
+        promptLength: Int,
+        generationSize: Int,
+        tasks: Array<String>
     )
 
     private external fun startChatWPrefetch(
-        msg: NativeMessageReceiver,
-        localModelPath: String,
-        systemPrompt: String,
-        threadNum: Int,
-        prefetchSizeInGB: Float,
-        lSize: Float
+            msg: NativeMessageReceiver,
+            localModelPath: String,
+            systemPrompt: String,
+            threadNum: Int,
+            prefetchSizeInGB: Float,
+            lSize: Float
     )
 
     private external fun startChatWPrefetch(
-        msg: NativeMessageReceiver,
-        localModelPath: String,
-        systemPrompt: String,
-        threadNum: Int,
-        memSize: Float
+            msg: NativeMessageReceiver,
+            localModelPath: String,
+            systemPrompt: String,
+            threadNum: Int,
+            memSize: Float
     )
 
-    external fun stop()
+    private external fun stop()
 
-    external fun kill()
+    private external fun kill()
+
+    fun startBenchmark(modelName: String, tasks: Array<BenchmarkTask>) {
+        val localModelPath = ModelOperations.modelName2modelInfo[modelName]!!.modelLocalPath
+
+        benchmark(
+            msg,
+            localModelPath,
+            Config.threadNum,
+            Config.benchmarkPromptLength,
+            Config.benchmarkGenerationSize,
+            arrayOf("ppl-wikitext")
+        )
+
+        curThread = Thread {
+            while (!Thread.currentThread().isInterrupted) {
+                msg.reset()
+                val s: String = msg.waitForString()!!
+
+                println("benchmark message $s")
+            }
+        }
+        curThread!!.start()
+    }
 
     fun init(modelName: String, enablePrefetch: Boolean, listener: ChatListener) {
         val mInfo = ModelOperations.modelName2modelInfo[modelName]
         val totalMemory = (getTotalMemory() / Constants.GB).toFloat()
-        val canUseMemory = min(totalMemory.toDouble(), Config.maxMemorySize.toDouble())
-            .toFloat()
+        val canUseMemory = min(totalMemory.toDouble(), Config.maxMemorySize.toDouble()).toFloat()
         val modelSize = mInfo!!.modelSize.toFloat() / Constants.GB
 
         var prefetchSizeInGB = 0f
@@ -130,7 +161,7 @@ object LLama {
         }
 
         println(
-            """
+                """
                 INIT: $modelName
                 path: ${mInfo.modelLocalPath}
                 prefetch: $enablePrefetch
@@ -138,21 +169,18 @@ object LLama {
         )
         if (enablePrefetch) {
             startChatWPrefetch(
-                msg, mInfo.modelLocalPath,
-                mInfo.systemPrompt,
-                Config.threadNum,
-                memSize
+                    msg,
+                    mInfo.modelLocalPath,
+                    mInfo.systemPrompt,
+                    Config.threadNum,
+                    memSize
             )
             //            startChatWPrefetch(msg, mInfo.getModelLocalPath(),
-//                    mInfo.getSystemPrompt(),
-//                    Config.threadNum,
-//                    0,0);
+            //                    mInfo.getSystemPrompt(),
+            //                    Config.threadNum,
+            //                    0,0);
         } else {
-            startChat(
-                msg, mInfo.modelLocalPath,
-                mInfo.systemPrompt,
-                Config.threadNum
-            )
+            startChat(msg, mInfo.modelLocalPath, mInfo.systemPrompt, Config.threadNum)
         }
         println("Start thread to receive new strings")
         curThread = Thread {
@@ -168,8 +196,7 @@ object LLama {
                 } else {
                     if (msg.isStart) {
                         listener.onUpdateInfo(s)
-                        answerState =
-                            AnswerState.NO_MESSAGE_NEED_REPLY
+                        answerState = AnswerState.NO_MESSAGE_NEED_REPLY
                     } else {
                         listener.onBotContinue(s)
                     }
@@ -192,7 +219,7 @@ object LLama {
     }
 
     fun clear() {
-//        messageAdapter.clear();
+        //        messageAdapter.clear();
     }
 
     interface ChatListener {

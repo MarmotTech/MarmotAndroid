@@ -3,23 +3,22 @@ package me.jinheng.cityullm.utils
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import me.jinheng.cityullm.models.Config
-import me.jinheng.cityullm.models.ModelInfo
-import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
 import kotlin.concurrent.Volatile
+import me.jinheng.cityullm.models.Config
+import me.jinheng.cityullm.models.ModelInfo
+import org.apache.commons.io.FileUtils
 
 object ModelOperations {
     var modelName2modelInfo: HashMap<String, ModelInfo> = HashMap()
 
     var modelInfoUrl: String = "https://conference.cs.cityu.edu.hk/saccps/app/models/models.json"
 
-    @Volatile
-    private var downloadStatus = DownloadStatus.RUNNING
+    @Volatile private var downloadStatus = DownloadStatus.RUNNING
 
     @Throws(Exception::class)
     fun downloadFile(fileUrl: String, filePath: String, listener: ProgressListener?): Boolean {
@@ -91,15 +90,12 @@ object ModelOperations {
                 val content = FileUtils.readFileToString(localFile, "utf-8")
                 val itemType = object : TypeToken<List<ModelInfo>>() {}.type
 
-                val models = Gson().fromJson<List<ModelInfo>>(
-                    content,
-                    itemType
-                )
+                val models = Gson().fromJson<List<ModelInfo>>(content, itemType)
                 modelName2modelInfo.clear()
                 for (info in models) {
-//                    if (info.tasks != null) {
-//                        benchmarkTasksJson = info.tasks.toJSONString()
-//                    }
+                    //                    if (info.tasks != null) {
+                    //                        benchmarkTasksJson = info.tasks.toJSONString()
+                    //                    }
                     info.modelLocalPath = Config.modelPath + info.modelLocalPath
                     modelName2modelInfo[info.modelName] = info
                 }
@@ -112,32 +108,20 @@ object ModelOperations {
             executorService.execute {
                 try {
                     // Download metadata of models from server
-                    val result = downloadFile(
-                        modelInfoUrl,
-                        modelInfoPath,
-                        null
-                    )
+                    val result = downloadFile(modelInfoUrl, modelInfoPath, null)
                     if (result) {
                         val remoteFile = File(modelInfoPath)
-                        val content =
-                            FileUtils.readFileToString(remoteFile, "utf-8")
+                        val content = FileUtils.readFileToString(remoteFile, "utf-8")
                         val itemType = object : TypeToken<List<ModelInfo>>() {}.type
 
-                        val models = Gson().fromJson<List<ModelInfo>>(
-                            content,
-                            itemType
-                        )
+                        val models = Gson().fromJson<List<ModelInfo>>(content, itemType)
 
                         for (info in models) {
-                            info.modelLocalPath =
-                                Config.modelPath + info.modelLocalPath
+                            info.modelLocalPath = Config.modelPath + info.modelLocalPath
                             modelName2modelInfo[info.modelName] = info
                         }
                     } else {
-                        Log.d(
-                            "debug",
-                            "$modelInfoUrl cannot be downloaded"
-                        )
+                        Log.d("debug", "$modelInfoUrl cannot be downloaded")
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -148,21 +132,17 @@ object ModelOperations {
 
     val allSupportModels: List<ModelInfo>
         get() {
-            val models: List<ModelInfo> = ArrayList(
-                modelName2modelInfo.values
-            )
+            val models: List<ModelInfo> = ArrayList(modelName2modelInfo.values)
             return models
         }
 
-   fun downloadModelAsync(modelName: String, listener: ProgressListener?) {
+    fun downloadModelAsync(modelName: String, listener: ProgressListener?) {
         val executorService = Executors.newSingleThreadExecutor()
         val model = getModelInfo(modelName)
 
         executorService.execute {
             try {
-                downloadFile(
-                    model!!.modelUrl, model.modelLocalPath, listener
-                )
+                downloadFile(model!!.modelUrl, model.modelLocalPath, listener)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -170,9 +150,7 @@ object ModelOperations {
     }
 
     fun pauseDownload() {
-        synchronized(downloadStatus) {
-            downloadStatus = DownloadStatus.PAUSED
-        }
+        synchronized(downloadStatus) { downloadStatus = DownloadStatus.PAUSED }
     }
 
     fun resumeDownload() {
