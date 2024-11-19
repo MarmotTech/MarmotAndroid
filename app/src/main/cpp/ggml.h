@@ -209,6 +209,26 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#ifdef PREFETCH
+
+#define SYNC_READ
+//#define DEBUG
+
+#define THREAD_NUM 4
+#define AVAIL_MEM 2.0f
+#define CTX_SIZE 512
+
+#define BLOCK_SIZE 4096
+
+#define atomic_load_prefetch(ptr) __sync_fetch_and_add(ptr, 0)
+#define atomic_store_prefetch(ptr, val) __sync_lock_test_and_set(ptr, val)
+#define atomic_increase_prefetch(ptr) __sync_fetch_and_add(ptr, 1)
+#define atomic_add_prefetch(ptr, val) __sync_fetch_and_add(ptr, val)
+#define atomic_sub_prefetch(ptr, val) __sync_fetch_and_sub(ptr, val)
+#define atomic_cas_prefetch(ptr, old, new) __sync_bool_compare_and_swap(ptr, old, new)
+
+#endif
+
 #define GGML_FILE_MAGIC   0x67676d6c // "ggml"
 #define GGML_FILE_VERSION 2
 
@@ -244,7 +264,11 @@
 
 #define GGUF_VERSION 3
 
-#define GGUF_DEFAULT_ALIGNMENT 32
+#ifdef PREFETCH
+#define GGUF_DEFAULT_ALIGNMENT 4096
+#else
+#define GGUF_DEFAULT_ALIGNMENT 4096
+#endif
 
 #define GGML_UNUSED(x) (void)(x)
 
@@ -609,6 +633,10 @@ extern "C" {
 
         void * extra; // extra things e.g. for ggml-cuda.cu
 
+#ifdef PREFETCH
+        uint64_t off;
+        uint64_t need_prefetch;
+#endif
         // char padding[4];
     };
 
@@ -844,7 +872,11 @@ extern "C" {
     GGML_API struct ggml_tensor * ggml_set_name   (      struct ggml_tensor * tensor, const char * name);
     GGML_ATTRIBUTE_FORMAT(2, 3)
     GGML_API struct ggml_tensor * ggml_format_name(      struct ggml_tensor * tensor, const char * fmt, ...);
-
+#ifdef PREFETCH
+    GGML_API size_t     ggml_get_layer_index(const struct ggml_tensor * tensor, int is_param);
+    GGML_API void       ggml_prefetch_tensor(      struct ggml_tensor * tensor);
+    GGML_API void       ggml_mlock_tensor   (      struct ggml_tensor * tensor);
+#endif
     //
     // operations on tensors with backpropagation
     //

@@ -112,6 +112,11 @@ class Model:
                                            split_max_tensors=split_max_tensors, split_max_size=split_max_size, dry_run=dry_run, small_first_shard=small_first_shard,
                                            alignment=alignment)
         self.sort_tensors = sort_tensors
+        logger.info(f"aligning tensors to {alignment} bytes")
+        if self.sort_tensors:
+            logger.info("sorting tensors")
+        else:
+            logger.info("not sorting tensors")
 
     @classmethod
     def __init_subclass__(cls):
@@ -4363,6 +4368,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--alignment", type=int,
+        default=gguf.GGUF_DEFAULT_ALIGNMENT,
         help="Specify the alignment for the output file"
     )
     parser.add_argument(
