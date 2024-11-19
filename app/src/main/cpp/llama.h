@@ -307,6 +307,11 @@ extern "C" {
         bool use_mmap;      // use mmap if possible
         bool use_mlock;     // force system to keep model in RAM
         bool check_tensors; // validate model tensor data
+#ifdef PREFETCH
+        int32_t thread_num; // number of threads to use for prefetching
+        float available_mem;// available memory for prefetching
+        float ctx_size;     // context size for prefetching
+#endif
     };
 
     // NOTE: changing the default values of parameters marked as [EXPERIMENTAL] may cause crashes or incorrect results in certain configurations
@@ -367,6 +372,7 @@ extern "C" {
         bool keep_split;                     // quantize to the same number of shards
         void * imatrix;                      // pointer to importance matrix data
         void * kv_overrides;                 // pointer to vector containing overrides
+        size_t align;                        // alignment for quantized tensors
     } llama_model_quantize_params;
 
     typedef struct llama_logit_bias {
