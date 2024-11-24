@@ -2,17 +2,22 @@ package me.jinheng.cityullm.ui
 
 import android.graphics.Typeface
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.BottomSheetDefaults
@@ -73,36 +78,69 @@ fun BenchmarkBottomSheet(
         properties = ModalBottomSheetDefaults.properties(
             shouldDismissOnBackPress = !isRunning
         ),
-        windowInsets = BottomSheetDefaults.windowInsets.only(
-            WindowInsetsSides.Bottom
-        ),
+        windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
         if (isRunning) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .padding(24.dp),
-                    color = colorResource(R.color.mainColor)
+                Text(
+                    "Benchmark in Progress...",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
                 )
 
                 Text(
-                    "Benchmarking...",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    "Please do not close the app and wait for a while.",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray
+                )
+
+                HandsLoader(
+                    modifier = Modifier
+                        .size(200.dp, 200.dp)
+                        .align(Alignment.CenterHorizontally)
                 )
             }
         } else {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    "Select models:",
+                    "Initiating New Benchmark Process",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                Text(
+                    "Begin the benchmarking setup.",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray
+                )
+
+                Spacer(
+                    modifier = Modifier
+                        .height(24.dp)
+                )
+
+                Text(
+                    "Choose the Model(s) to Benchmark:",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    "Select the models you want to evaluate.",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray
                 )
 
                 LazyColumn {
@@ -136,9 +174,16 @@ fun BenchmarkBottomSheet(
                     )
 
                     Text(
-                        "Select tasks:",
+                        "Select the Task(s) for Evaluation:",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        "Choose the tasks for the benchmarking process.",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Gray
                     )
 
                     LazyColumn {
@@ -164,17 +209,37 @@ fun BenchmarkBottomSheet(
                     }
                 }
 
-                if (selectedTasks.isNotEmpty()) {
-                    SwipeToStart(
+                Spacer(
+                    modifier = Modifier
+                        .height(24.dp)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                ) {
+                    Button(
                         modifier = Modifier
-                            .padding(top = 24.dp),
-                        text = "Swipe to benchmark..."
+                            .height(54.dp)
+                            .fillMaxWidth(),
+                        enabled = selectedTasks.isNotEmpty(),
+                        onClick = {
+                            isRunning = true
+                            LLama.startBenchmark(
+                                models = selectedModels.map { it.modelLocalPath }.toTypedArray(),
+                                tasks = selectedTasks.toTypedArray(),
+                                onFinished = onComplete
+                            )
+                        },
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.mainColor),
+                        ),
                     ) {
-                        isRunning = true
-                        LLama.startBenchmark(
-                            models = selectedModels.map { it.modelLocalPath }.toTypedArray(),
-                            tasks = selectedTasks.toTypedArray(),
-                            onFinished = onComplete
+                        Text(
+                            "Start benchmark",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
