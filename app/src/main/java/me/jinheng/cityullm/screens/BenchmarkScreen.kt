@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -57,12 +60,12 @@ fun BenchmarkScreen() {
             modifier = Modifier
                 .background(Color.White)
                 .padding(top = 24.dp)
-                .safeDrawingPadding()
                 .fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .statusBarsPadding(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
@@ -116,7 +119,13 @@ fun BenchmarkScreen() {
                     .fillMaxWidth()
                     .weight(1f)
                     .background(colorResource(R.color.tertiaryColor)),
-                contentPadding = PaddingValues(16.dp)
+                contentPadding = PaddingValues(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 32.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(benchmarkResults) { result ->
                     val modelInfo = ModelOperations.allSupportModels.first {
