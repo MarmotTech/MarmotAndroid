@@ -4,6 +4,7 @@ appcompat = "1.7.0"
 firebaseInappmessaging = "21.0.1"
 gson = "2.11.0"
 kotlin = "2.0.0"
+kotlinKsp = "2.0.0-1.0.23"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -17,6 +18,10 @@ navigationFragmentKtx = "2.8.3"
 oshiCore = "6.6.0"
 physicsLayout = "0.4.1"
 firebaseCrashlyticsBuildtools = "3.0.2"
+roomRuntime = "2.6.1"
+roomCompiler = "2.6.1"
+roomKtx = "2.6.1"
+runtimeLivedata = "1.7.5"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -44,9 +49,14 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 physics-layout = { module = "io.github.klassenkonstantin:physics-layout", version.ref = "physicsLayout" }
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshiCore" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "kotlinKsp" }
 

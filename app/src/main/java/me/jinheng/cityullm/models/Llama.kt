@@ -1,6 +1,8 @@
 package me.jinheng.cityullm.models
 
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.File
 import kotlin.math.min
 import me.jinheng.cityullm.utils.ModelOperations
@@ -94,7 +96,7 @@ object LLama {
 
     private external fun benchmark(
         msg: NativeMessageReceiver?,
-        localModelPath: String,
+        localModelPath: Array<String>,
         threadNum: Int,
         promptLength: Int,
         generationSize: Int,
@@ -122,25 +124,30 @@ object LLama {
 
     private external fun kill()
 
-    fun startBenchmark(modelName: String, tasks: Array<BenchmarkTask>) {
-        val localModelPath = ModelOperations.modelName2modelInfo[modelName]!!.modelLocalPath
-
-        benchmark(
-            msg,
-            localModelPath,
-            Config.threadNum,
-            Config.benchmarkPromptLength,
-            Config.benchmarkGenerationSize,
-            arrayOf("ppl-wikitext")
-        )
-
+    fun startBenchmark(
+        models: Array<String>,
+        tasks: Array<String>,
+        onFinished: (List<BenchmarkResult>) -> Unit
+    ) {
         curThread = Thread {
-            while (!Thread.currentThread().isInterrupted) {
-                msg.reset()
-                val s: String = msg.waitForString()!!
+            msg.reset()
 
-                println("benchmark message $s")
-            }
+            println("started")
+
+            benchmark(
+                msg,
+                models,
+                Config.threadNum,
+                Config.benchmarkPromptLength,
+                Config.benchmarkGenerationSize,
+                tasks
+            )
+            val s: String = msg.waitForString()!!
+
+            val itemType = object : TypeToken<List<BenchmarkResult>>() {}.type
+            val results = Gson().fromJson<List<BenchmarkResult>>(s, itemType)
+
+            onFinished(results)
         }
         curThread!!.start()
     }

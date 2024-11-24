@@ -26,9 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import me.jinheng.cityullm.BenchmarkActivity
 import me.jinheng.cityullm.R
 import me.jinheng.cityullm.ModelsActivity
-import me.jinheng.cityullm.models.BenchmarkTask
 import me.jinheng.cityullm.models.LLama
 import me.jinheng.cityullm.ui.MenuCard
 
@@ -103,13 +103,8 @@ fun MenuScreen() {
                 buttonText = "Start Benchmarking",
                 containerColor = colorResource(R.color.secondaryColor),
                 onStartClick = {
-                    // TODO: Screen for selecting tasks and models
-                    LLama.startBenchmark(
-                        modelName = "tinyllama-1.1b-chat-v1.0",
-                        tasks = arrayOf(
-                            BenchmarkTask("103", "wikitext103"),
-                            BenchmarkTask("2","wikitext2")
-                        )
+                    context.startActivity(
+                        Intent(context, BenchmarkActivity::class.java)
                     )
                 },
                 buttonColors = ButtonDefaults.buttonColors(

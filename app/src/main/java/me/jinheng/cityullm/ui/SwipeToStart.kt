@@ -53,7 +53,11 @@ private enum class DragAnchors(val fraction: Float) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SwipeToStart(onComplete: () -> Unit) {
+fun SwipeToStart(
+    modifier: Modifier = Modifier,
+    text: String = "Swipe to start...",
+    onComplete: () -> Unit
+) {
     val density = LocalDensity.current
 
     val state = remember {
@@ -78,7 +82,7 @@ fun SwipeToStart(onComplete: () -> Unit) {
     val contentSizePx = with(density) { contentSize.toPx() }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(containerSize)
             .fillMaxWidth()
             .onSizeChanged { layoutSize ->
@@ -97,7 +101,7 @@ fun SwipeToStart(onComplete: () -> Unit) {
             .padding(contentPadding)
     ) {
         Text(
-            "Swipe to start...",
+            text,
             fontSize = 18.sp,
             color = Color.White,
             textAlign = TextAlign.Center,
