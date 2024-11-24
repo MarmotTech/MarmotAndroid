@@ -93,9 +93,6 @@ object ModelOperations {
                 val models = Gson().fromJson<List<ModelInfo>>(content, itemType)
                 modelName2modelInfo.clear()
                 for (info in models) {
-                    //                    if (info.tasks != null) {
-                    //                        benchmarkTasksJson = info.tasks.toJSONString()
-                    //                    }
                     info.modelLocalPath = Config.modelPath + info.modelLocalPath
                     modelName2modelInfo[info.modelName] = info
                 }

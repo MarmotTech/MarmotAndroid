@@ -17,7 +17,7 @@ class ModelInfo {
 
     var systemPrompt: String
 
-    var tasks: ArrayList<BenchmarkTask>?
+    var tasks: ArrayList<String>?
 
     constructor(
         modelName: String,
@@ -27,7 +27,7 @@ class ModelInfo {
         kvSize: Long,
         prefetchSize: Long,
         systemPrompt: String,
-        tasks: ArrayList<BenchmarkTask>?
+        tasks: ArrayList<String>?
     ) {
         this.modelName = modelName
         this.modelUrl = modelUrl

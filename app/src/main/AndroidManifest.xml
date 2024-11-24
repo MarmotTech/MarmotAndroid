@@ -21,6 +21,7 @@
         <activity android:name=".ModelsActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
         <activity android:name=".ChatActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar" android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".MenuActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
+        <activity android:name=".BenchmarkActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
