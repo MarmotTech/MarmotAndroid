@@ -75,7 +75,7 @@ fun WelcomeScreen() {
                 )
 
                 Text(
-                    "MBZUAI",
+                    "MARMOT",
                     fontSize = 20.sp,
                     color = Color.White
                 )
