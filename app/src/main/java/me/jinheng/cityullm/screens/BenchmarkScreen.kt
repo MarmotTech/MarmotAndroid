@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -69,9 +66,15 @@ fun BenchmarkScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    "MBZUAI On-Device LLM",
+                    "Benchmarking",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
+                )
+
+                Text(
+                    "Analyze and Compare Model Efficiency and Throughput",
+                    fontSize = 14.sp,
+                    color = Color.Gray
                 )
 
                 Row(
@@ -79,14 +82,15 @@ fun BenchmarkScreen() {
                 ) {
                     Button(
                         modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
+                            .height(54.dp)
+                            .weight(1f),
+                        onClick = {
+//                            showCreateSheet = true
+                        },
+                        shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(R.color.secondaryColor)
                         ),
-                        onClick = {
-
-                        }
                     ) {
                         Text(
                             "Export",
@@ -96,17 +100,18 @@ fun BenchmarkScreen() {
                     }
                     Button(
                         modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
+                            .height(54.dp)
+                            .weight(1f),
+                        onClick = {
+                            showCreateSheet = true
+                        },
+                        shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(R.color.mainColor)
                         ),
-                        onClick = {
-                            showCreateSheet = true
-                        }
                     ) {
                         Text(
-                            "Create",
+                            "Start new",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                         )
@@ -180,13 +185,15 @@ fun BenchmarkScreen() {
                             ResultColumn(
                                 name = "Model Params",
                                 value = result.model_n_params.toFloat(),
-                                format = "%.0f"
+                                format = "%.0f",
+                                valueColor = Color.Black
                             )
 
                             ResultColumn(
                                 name = "Model Size",
                                 value = result.model_size.toFloat(),
-                                format = "%.0f"
+                                format = "%.0f",
+                                valueColor = Color.Black
                             )
                         }
                     }
@@ -211,7 +218,8 @@ fun BenchmarkScreen() {
 fun ResultColumn(
     name: String,
     value: Float,
-    format: String = "%.3f t/s"
+    format: String = "%.3f t/s",
+    valueColor: Color = colorResource(R.color.mainColor)
 ) {
     Column(
         modifier = Modifier
@@ -224,13 +232,13 @@ fun ResultColumn(
             String.format(Locale.ROOT, format, value),
             fontSize = 32.sp,
             style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
-            color = colorResource(R.color.mainColor),
+            color = valueColor,
             fontWeight = FontWeight.ExtraBold,
         )
         Text(
             name,
             fontSize = 16.sp,
-            color = colorResource(R.color.secondaryColor),
+            color = Color.Gray,
             fontWeight = FontWeight.SemiBold,
         )
     }

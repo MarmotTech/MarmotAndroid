@@ -42,7 +42,7 @@ fun ModelsScreen() {
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                "MBZUAI On-Device LLM",
+                "MARMOT On-Device LLM",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier

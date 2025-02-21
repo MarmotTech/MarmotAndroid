@@ -1,5 +1,6 @@
 package me.jinheng.cityullm.screens
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -41,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -50,7 +55,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import me.jinheng.cityullm.ChatActivity
 import me.jinheng.cityullm.R
+import me.jinheng.cityullm.SettingsActivity
 import me.jinheng.cityullm.models.ChatItem
 import me.jinheng.cityullm.models.ChatItemType
 import me.jinheng.cityullm.models.LLama
@@ -59,6 +66,7 @@ import me.jinheng.cityullm.utils.advancedShadow
 
 @Composable
 fun ChatScreen(modelInfo: ModelInfo) {
+    val context = LocalContext.current
     var textValue by remember { mutableStateOf("") }
     val history = remember { mutableStateListOf<ChatItem>() }
     val scrollState = rememberScrollState()
@@ -111,10 +119,35 @@ fun ChatScreen(modelInfo: ModelInfo) {
             }
 
             Text(
-                modelInfo.modelName,
+                modifier = Modifier
+                    .weight(1f),
+                text = modelInfo.modelName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
+
+            Button(
+                modifier = Modifier
+                    .size(width = 32.dp, height = 32.dp),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent
+                ),
+                onClick = {
+                    val intent = Intent(context, SettingsActivity::class.java)
+                    intent.putExtra("modelName", modelInfo.modelName)
+
+                    context.startActivity(intent)
+                }
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp, 24.dp),
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = "",
+                    tint = Color.Black
+                )
+            }
         }
 
         Box(

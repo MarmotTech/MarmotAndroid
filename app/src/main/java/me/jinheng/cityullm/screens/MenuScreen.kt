@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -59,12 +60,10 @@ fun MenuScreen() {
             .padding(16.dp)
             .safeDrawingPadding()
     ) {
-        Image(
+        Box(
             modifier = Modifier
                 .padding(bottom = 111.dp)
-                .height(54.dp),
-            painter = painterResource(R.drawable.mbzuai_logo),
-            contentDescription = ""
+                .height(54.dp)
         )
 
         Text(
