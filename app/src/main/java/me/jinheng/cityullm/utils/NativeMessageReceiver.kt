@@ -18,13 +18,17 @@ class NativeMessageReceiver {
     }
 
     @SuppressLint("DefaultLocale")
-    fun receiveStartFromNative(toeknPerSecondPrefill: Float, toeknPerSecondDecode: Float) {
+    fun receiveStartFromNative(tokenPerSecondPrefill: Float, tokenPerSecondDecode: Float) {
         synchronized(lock) {
-            receivedString = String.format(
-                "prefill: %.1f tok/s; decode: %.1f tok/s",
-                toeknPerSecondPrefill,
-                toeknPerSecondDecode
-            )
+            if (tokenPerSecondPrefill == Float.POSITIVE_INFINITY) {
+                receivedString = ""
+            } else {
+                receivedString = String.format(
+                    "prefill: %.1f tok/s; decode: %.1f tok/s",
+                    tokenPerSecondPrefill,
+                    tokenPerSecondDecode
+                )
+            }
             isStart = true
             (lock as Object).notifyAll()
         }

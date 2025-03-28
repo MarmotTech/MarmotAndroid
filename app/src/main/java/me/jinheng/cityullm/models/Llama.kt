@@ -108,7 +108,8 @@ object LLama {
             systemPrompt: String,
             threadNum: Int,
             prefetchThreadNum: Int,
-            lSize: Float
+            lSize: Float,
+            contextSize: Int
     )
 
     private external fun stop()
@@ -165,16 +166,19 @@ object LLama {
                 """.trimIndent()
         )
         if (true) {
+            println("Start to chat with prefetch")
             startChatWPrefetch(
                 msg,
-                modelInfo.modelLocalPath,
-                modelInfo.systemPrompt,
+                Config.modelPath + modelInfo.modelLocalPath,
+                "You are a helpful assistant, please answer my question",
                 Config.threadNum,
-                Config.threadNum,
-                4F
+                1,
+                8F,
+                512
             )
         } else {
-            startChat(msg, modelInfo.modelLocalPath, modelInfo.systemPrompt, Config.threadNum)
+            println("Start to chat without prefetch")
+            startChat(msg, Config.modelPath + modelInfo.modelLocalPath, modelInfo.systemPrompt, Config.threadNum)
         }
         println("Start thread to receive new strings")
         curThread = Thread {
