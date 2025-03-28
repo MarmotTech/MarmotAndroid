@@ -51,12 +51,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.marmot.marmotapp.ChatActivity
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.SettingsActivity
 import com.marmot.marmotapp.models.ChatItem
 import com.marmot.marmotapp.models.ChatItemType
 import com.marmot.marmotapp.models.LLama
 import com.marmot.marmotapp.models.ModelInfo
+import com.marmot.marmotapp.models.ModelImage
 import com.marmot.marmotapp.utils.advancedShadow
 
 @Composable
@@ -104,12 +106,10 @@ fun ChatScreen(modelInfo: ModelInfo) {
                     .clip(CircleShape)
                     .background(colorResource(R.color.tertiaryColor))
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.tinyllama_icon),
-                    contentDescription = null,
+                ModelImage(
+                    modelInfo = modelInfo,
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(CircleShape)
                 )
             }
 

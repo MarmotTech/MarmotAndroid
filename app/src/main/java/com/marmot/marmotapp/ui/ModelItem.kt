@@ -51,13 +51,10 @@ fun ModelItem(
                     .clip(CircleShape)
                     .background(colorResource(R.color.tertiaryColor))
             ) {
-                Image(
-//                    painter = painterResource(id = R.drawable.tinyllama_icon),
-                    painter = rememberAsyncImagePainter(modelInfo.logoPath),
-                    contentDescription = null,
+                ModelImage(
+                    modelInfo = modelInfo,
                     modifier = Modifier
                         .size(32.dp)
-                        .clip(CircleShape)
                 )
             }
 
