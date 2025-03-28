@@ -2,6 +2,7 @@ package me.jinheng.cityullm.ui
 
 import android.widget.Toast
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -60,12 +61,15 @@ fun SwipeToStart(
 ) {
     val density = LocalDensity.current
 
+    val decay = rememberSplineBasedDecay<Float>()
+
     val state = remember {
-        AnchoredDraggableState(
+        AnchoredDraggableState<DragAnchors>(
             initialValue = DragAnchors.Start,
             positionalThreshold = { distance: Float -> distance * 0.5f },
             velocityThreshold = { with(density) { 100.dp.toPx() } },
-            animationSpec = tween(),
+            snapAnimationSpec = tween(),
+            decayAnimationSpec = decay
         )
     }
 

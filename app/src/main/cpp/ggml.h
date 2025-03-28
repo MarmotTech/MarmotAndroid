@@ -875,6 +875,7 @@ extern "C" {
 #ifdef PREFETCH
     GGML_API size_t     ggml_get_layer_index(const struct ggml_tensor * tensor, int is_param);
     GGML_API void       ggml_prefetch_tensor(      struct ggml_tensor * tensor);
+    GGML_API void       ggml_prefetch_tensor_per_tensor(struct ggml_tensor * tensor, size_t index, int thread_index);
     GGML_API void       ggml_mlock_tensor   (      struct ggml_tensor * tensor);
 #endif
     //

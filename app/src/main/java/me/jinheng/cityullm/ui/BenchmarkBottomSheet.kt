@@ -50,11 +50,12 @@ import me.jinheng.cityullm.R
 import me.jinheng.cityullm.models.BenchmarkResult
 import me.jinheng.cityullm.models.LLama
 import me.jinheng.cityullm.models.ModelInfo
-import me.jinheng.cityullm.utils.ModelOperations
+import me.jinheng.cityullm.models.ModelManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BenchmarkBottomSheet(
+    modelManager: ModelManager,
     onComplete: (List<BenchmarkResult>?) -> Unit
 ) {
     var isRunning by remember { mutableStateOf(false) }
@@ -144,7 +145,7 @@ fun BenchmarkBottomSheet(
                 )
 
                 LazyColumn {
-                    items(ModelOperations.allSupportModels) { modelInfo ->
+                    items(modelManager.installedModels()) { modelInfo ->
                         val modelSelected = selectedModels.contains(modelInfo)
 
                         SelectableRow(
