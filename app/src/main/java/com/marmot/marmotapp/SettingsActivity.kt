@@ -1,6 +1,7 @@
 package com.marmot.marmotapp
 
 import android.os.Bundle
+import android.view.Display.Mode
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
