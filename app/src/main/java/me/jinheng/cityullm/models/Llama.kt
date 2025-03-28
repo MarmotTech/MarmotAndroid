@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import kotlin.math.min
-import me.jinheng.cityullm.utils.ModelOperations
 import me.jinheng.cityullm.utils.NativeMessageReceiver
 import me.jinheng.cityullm.utils.getTotalMemory
 
@@ -56,7 +55,7 @@ object LLama {
         }
 
         val historyFolder = File(llamaFolder, "history")
-        println("modelPath: ${modelFolder.absolutePath}")
+        Log.d("MRM", "modelPath: ${modelFolder.absolutePath}")
         Config.historyPath = historyFolder.absolutePath + "/"
         if (!historyFolder.exists()) {
             historyFolder.mkdirs()
@@ -108,16 +107,8 @@ object LLama {
             localModelPath: String,
             systemPrompt: String,
             threadNum: Int,
-            prefetchSizeInGB: Float,
+            prefetchThreadNum: Int,
             lSize: Float
-    )
-
-    private external fun startChatWPrefetch(
-            msg: NativeMessageReceiver,
-            localModelPath: String,
-            systemPrompt: String,
-            threadNum: Int,
-            memSize: Float
     )
 
     private external fun stop()
@@ -152,42 +143,38 @@ object LLama {
         curThread!!.start()
     }
 
-    fun init(modelName: String, enablePrefetch: Boolean, listener: ChatListener) {
-        val mInfo = ModelOperations.modelName2modelInfo[modelName]
+    fun init(modelInfo: ModelInfo, enablePrefetch: Boolean, listener: ChatListener) {
         val totalMemory = (getTotalMemory() / Constants.GB).toFloat()
         val canUseMemory = min(totalMemory.toDouble(), Config.maxMemorySize.toDouble()).toFloat()
-        val modelSize = mInfo!!.modelSize.toFloat() / Constants.GB
+        val modelSize = modelInfo.modelSize.toFloat() / Constants.GB
 
         var prefetchSizeInGB = 0f
         var kvCacheSizeInGB = 0f
         val memSize = 0f
 
         if (canUseMemory <= modelSize) {
-            prefetchSizeInGB = mInfo.prefetchSize.toFloat() / Constants.GB
-            kvCacheSizeInGB = mInfo.kvSize.toFloat() / Constants.GB
+            prefetchSizeInGB = modelInfo.prefetchSize.toFloat() / Constants.GB
+            kvCacheSizeInGB = modelInfo.kvSize.toFloat() / Constants.GB
         }
 
         println(
                 """
-                INIT: $modelName
-                path: ${mInfo.modelLocalPath}
+                INIT: ${modelInfo.modelName}
+                path: ${modelInfo.modelLocalPath}
                 prefetch: $enablePrefetch
                 """.trimIndent()
         )
-        if (enablePrefetch) {
+        if (true) {
             startChatWPrefetch(
-                    msg,
-                    mInfo.modelLocalPath,
-                    mInfo.systemPrompt,
-                    Config.threadNum,
-                    memSize
+                msg,
+                modelInfo.modelLocalPath,
+                modelInfo.systemPrompt,
+                Config.threadNum,
+                Config.threadNum,
+                4F
             )
-            //            startChatWPrefetch(msg, mInfo.getModelLocalPath(),
-            //                    mInfo.getSystemPrompt(),
-            //                    Config.threadNum,
-            //                    0,0);
         } else {
-            startChat(msg, mInfo.modelLocalPath, mInfo.systemPrompt, Config.threadNum)
+            startChat(msg, modelInfo.modelLocalPath, modelInfo.systemPrompt, Config.threadNum)
         }
         println("Start thread to receive new strings")
         curThread = Thread {

@@ -37,12 +37,14 @@ import androidx.compose.ui.unit.sp
 import me.jinheng.cityullm.R
 import me.jinheng.cityullm.models.BenchmarkResultsDatabase
 import me.jinheng.cityullm.models.BenchmarkResultsRepository
+import me.jinheng.cityullm.models.ModelManager
 import me.jinheng.cityullm.ui.BenchmarkBottomSheet
-import me.jinheng.cityullm.utils.ModelOperations
 import java.util.Locale
 
 @Composable
-fun BenchmarkScreen() {
+fun BenchmarkScreen(
+    modelManager: ModelManager
+) {
     var showCreateSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val resultsRepository = remember {
@@ -133,7 +135,7 @@ fun BenchmarkScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(benchmarkResults) { result ->
-                    val modelInfo = ModelOperations.allSupportModels.first {
+                    val modelInfo = modelManager.installedModels().first {
                         it.modelLocalPath == result.model_name
                     }
 
@@ -203,6 +205,7 @@ fun BenchmarkScreen() {
 
         if (showCreateSheet) {
             BenchmarkBottomSheet(
+                modelManager = modelManager,
                 onComplete = {
                     showCreateSheet = false
                     if (it != null) {
@@ -247,5 +250,7 @@ fun ResultColumn(
 @Preview
 @Composable
 fun BenchmarkScreenPreview() {
-    BenchmarkScreen()
+    BenchmarkScreen(
+        modelManager = ModelManager()
+    )
 }

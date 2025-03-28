@@ -1675,6 +1675,8 @@ class LlamaModel(Model):
             return 0
         elif name_items[0] == "lm_head":
             return n_layers + 2
+        elif name_items[0] == "rope_freqs":
+            return 0
         else:
             raise ValueError(f"Unexpected tensor name: {name}")
 
@@ -1958,6 +1960,20 @@ class QwenModel(Model):
         byte_encoder = bytes_to_unicode()
         return ''.join([byte_encoder[ord(char)] for char in b.decode('latin-1')])
 
+    def get_tensor_order(self, name: str) -> int:
+        n_layers = int(self.find_hparam(["num_hidden_layers", "n_layer"]))
+        name_items = name.split('.')
+        if name_items[0] == "model" and name_items[1] == "layers":
+            return int(name_items[2]) + 1
+        elif name_items[0] == "model" and name_items[1] == "norm":
+            return n_layers + 1
+        elif name_items[0] == "model" and name_items[1] == "embed_tokens":
+            return 0
+        elif name_items[0] == "lm_head":
+            return n_layers + 2
+        else:
+            raise ValueError(f"Unexpected tensor name: {name}")
+
     @staticmethod
     def bpe(mergeable_ranks: dict[bytes, int], token: bytes, max_rank: int | None = None) -> list[bytes]:
         parts = [bytes([b]) for b in token]
@@ -1993,6 +2009,20 @@ class QwenModel(Model):
 @Model.register("Qwen2ForCausalLM")
 class Qwen2Model(Model):
     model_arch = gguf.MODEL_ARCH.QWEN2
+
+    def get_tensor_order(self, name: str) -> int:
+        n_layers = int(self.find_hparam(["num_hidden_layers", "n_layer"]))
+        name_items = name.split('.')
+        if name_items[0] == "model" and name_items[1] == "layers":
+            return int(name_items[2]) + 1
+        elif name_items[0] == "model" and name_items[1] == "norm":
+            return n_layers + 1
+        elif name_items[0] == "model" and name_items[1] == "embed_tokens":
+            return 0
+        elif name_items[0] == "lm_head":
+            return n_layers + 2
+        else:
+            raise ValueError(f"Unexpected tensor name: {name}")
 
     def set_vocab(self):
         try:
@@ -2816,6 +2846,20 @@ class Gemma2Model(Model):
         self._set_vocab_sentencepiece()
 
         self.gguf_writer.add_add_space_prefix(False)
+
+    def get_tensor_order(self, name: str) -> int:
+        n_layers = int(self.find_hparam(["num_hidden_layers", "n_layer"]))
+        name_items = name.split('.')
+        if name_items[0] == "model" and name_items[1] == "layers":
+            return int(name_items[2]) + 1
+        elif name_items[0] == "model" and name_items[1] == "norm":
+            return n_layers + 1
+        elif name_items[0] == "model" and name_items[1] == "embed_tokens":
+            return 0
+        elif name_items[0] == "lm_head":
+            return n_layers + 2
+        else:
+            raise ValueError(f"Unexpected tensor name: {name}")
 
     def set_gguf_parameters(self):
         hparams = self.hparams

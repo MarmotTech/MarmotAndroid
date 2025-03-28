@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".MarmotApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -23,6 +24,7 @@
         <activity android:name=".MenuActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
         <activity android:name=".BenchmarkActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
         <activity android:name=".SettingsActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
+        <activity android:name=".DownloadsActivity" android:exported="false" android:theme="@style/Theme.CityULLM.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

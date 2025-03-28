@@ -74,8 +74,8 @@ fun ChatScreen(modelInfo: ModelInfo) {
 
     LaunchedEffect(Unit) {
         LLama.init(
-            modelInfo.modelName,
-            modelInfo.enablePrefetch,
+            modelInfo,
+            true,
             object: LLama.ChatListener {
                 override fun onUpdateInfo(s: String) {
                     println(s)
