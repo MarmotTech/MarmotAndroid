@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.HttpURLConnection
@@ -54,31 +55,43 @@ class ModelManager @Inject constructor() : ViewModel() {
         withContext(Dispatchers.IO) {
             val url = URL("https://conference.cs.cityu.edu.hk/saccps/app/models/models.json")
             val connection = url.openConnection() as HttpURLConnection
-            Log.d("MRM", "Fetch models from ${url}")
+            val localFile = File(Config.modelPath, "models.json")
+
             try {
                 connection.requestMethod = "GET"
                 connection.connect()
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val metaFile = File(Config.modelPath + "models.json")
-                metaFile.outputStream().bufferedWriter().use { it.write(response) }
-                _models.value =
-                    Gson().fromJson(response, object : TypeToken<List<ModelInfo>>() {}.type)
-                        ?: listOf()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("MRM", "No network, loading models from local file")
-                val metaFile = File(Config.modelPath + "models.json")
-                try {
-                    val content = metaFile.inputStream().bufferedReader().use { it.readText() }
-                    _models.value = Gson().fromJson(content, object : TypeToken<List<ModelInfo>>() {}.type)
-                        ?: listOf()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Log.d("MRM", "Local model metafile doesn't exist")
+
+                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                    val response = connection.inputStream.bufferedReader().use { it.readText() }
+                    _models.value = Gson().fromJson(response, object : TypeToken<List<ModelInfo>>() {}.type) ?: listOf()
+
+                    localFile.writeText(response)
+                    Log.d("MRM", "Successfully updated local model file")
+                } else {
+                    Log.e("MRM", "Failed to fetch models, HTTP response: ${connection.responseCode}")
+                    loadFromLocalFile(localFile)
                 }
+            } catch (e: IOException) {
+                Log.e("MRM", "Network error, reading from local file", e)
+                loadFromLocalFile(localFile)
             } finally {
                 connection.disconnect()
             }
+        }
+    }
+
+    private fun loadFromLocalFile(file: File) {
+        if (file.exists()) {
+            try {
+                val localData = file.readText()
+                _models.value = Gson().fromJson(localData, object : TypeToken<List<ModelInfo>>() {}.type) ?: listOf()
+                Log.d("MRM", "Loaded models from local file")
+            } catch (e: Exception) {
+                Log.e("MRM", "Error reading local models file", e)
+            }
+        } else {
+            Log.e("MRM", "Local models file does not exist")
+            _models.value = listOf()
         }
     }
 
