@@ -1,0 +1,52 @@
+[
+  {
+    "modelName": "tinyllama-1.1b-chat-v1.0",
+    "modelUrl": "https://conference.cs.cityu.edu.hk/saccps/app/models/ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf",
+    "modelLocalPath": "ggml-model-tinyllama-1.1b-chat-v1.0-q4_0.gguf",
+    "modelSize": 636727296,
+    "minMem": 2,
+    "prefetchThread": 1,
+    "systemPrompt": "You are a friendly chatbot who always responds in the style of a pirate",
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+  },
+  {
+    "modelName": "llama-2-7b-chat",
+    "modelUrl": "https://conference.cs.cityu.edu.hk/saccps/app/models/ggml-model-llama-2-7b-chat-q4_0.gguf",
+    "modelLocalPath": "ggml-model-llama-2-7b-chat-q4_0.gguf",
+    "modelSize": 3825811456,
+    "minMem": 2,
+    "prefetchThread": 1,
+    "systemPrompt": "You are a friendly chatbot who always responds in the style of a pirate",
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+  },
+  {
+    "modelName": "llama-2-13b-chat",
+    "modelUrl": "https://conference.cs.cityu.edu.hk/saccps/app/models/ggml-model-llama-2-13b-chat-q4_0.gguf",
+    "modelLocalPath": "ggml-model-llama-2-13b-chat-q4_0.gguf",
+    "modelSize": 7365840896,
+    "minMem": 2,
+    "prefetchThread": 1,
+    "systemPrompt": "You are a friendly chatbot who always responds in the style of a pirate",
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+  },
+  {
+    "modelName": "llama-2-70b-chat",
+    "modelUrl": "https://conference.cs.cityu.edu.hk/saccps/app/models/ggml-model-llama-2-70b-chat-q4_0.gguf",
+    "modelLocalPath": "ggml-model-llama-2-70b-chat-q4_0.gguf",
+    "modelSize": 38872252416,
+    "minMem": 2,
+    "prefetchThread": 1,
+    "systemPrompt": "You are a friendly chatbot who always responds in the style of a pirate",
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+  },
+  {
+    "modelName": "qwen2.5-32b",
+    "modelUrl": "https://conference.cs.cityu.edu.hk/saccps/app/models/ggml-model-qwen2.5-32b-q4_0.gguf",
+    "modelLocalPath": "ggml-model-qwen2.5-32b-q4_0.gguf",
+    "modelSize": 18640232448,
+    "minMem": 5,
+    "prefetchThread": 1,
+    "systemPrompt": "",
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+  }
+]
