@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    namespace = "me.jinheng.cityullm"
+    namespace = "com.marmot.marmotapp"
     compileSdk = 35
     ndkVersion = "25.1.8937393"
 
     defaultConfig {
-        applicationId = "me.jinheng.cityullm"
+        applicationId = "com.marmot.marmotapp"
         minSdk = 29
         targetSdk = 34
         versionCode = 1

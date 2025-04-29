@@ -294,7 +294,8 @@ fun ChatScreenPreview() {
             prefetchSize = 0,
             systemPrompt = "",
             kvSize = 0,
-            tasks = null
+            tasks = null,
+            logoPath = ""
         )
     )
 }

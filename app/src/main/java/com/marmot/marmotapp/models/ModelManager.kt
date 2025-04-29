@@ -1,5 +1,6 @@
 package com.marmot.marmotapp.models
 
+import android.net.ConnectivityManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.google.common.io.Files
@@ -40,27 +41,27 @@ class ModelManager @Inject constructor() : ViewModel() {
     suspend fun fetchModels() {
         Log.d("MRM", "fetchModels called ${this}")
         withContext(Dispatchers.IO) {
-//            val url = URL("https://conference.cs.cityu.edu.hk/saccps/app/models/models.json")
-//            val connection = url.openConnection() as HttpURLConnection
-//            try {
-//                connection.requestMethod = "GET"
-//                connection.connect()
-//                val response = connection.inputStream.bufferedReader().use { it.readText() }
-//                val metaFile = File(Config.modelPath + "models.json")
-//                metaFile.outputStream().bufferedWriter().use { it.write(response) }
-//                _models.value =
-//                    Gson().fromJson(response, object : TypeToken<List<ModelInfo>>() {}.type)
-//                        ?: listOf()
-//                Log.d("WTF", "${models}")
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-            val metaFile = File(Config.modelPath + "models.json")
-            val content = metaFile.inputStream().bufferedReader().use { it.readText() }
-            _models.value = Gson().fromJson(content, object : TypeToken<List<ModelInfo>>() {}.type)
-                ?: listOf()
-//            } finally {
-//                connection.disconnect()
-//            }
+            val url = URL("https://conference.cs.cityu.edu.hk/saccps/app/models/models.json")
+            val connection = url.openConnection() as HttpURLConnection
+            try {
+                connection.requestMethod = "GET"
+                connection.connect()
+                val response = connection.inputStream.bufferedReader().use { it.readText() }
+                val metaFile = File(Config.modelPath + "models.json")
+                metaFile.outputStream().bufferedWriter().use { it.write(response) }
+                _models.value =
+                    Gson().fromJson(response, object : TypeToken<List<ModelInfo>>() {}.type)
+                        ?: listOf()
+                Log.d("WTF", "${models}")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                val metaFile = File(Config.modelPath + "models.json")
+                val content = metaFile.inputStream().bufferedReader().use { it.readText() }
+                _models.value = Gson().fromJson(content, object : TypeToken<List<ModelInfo>>() {}.type)
+                    ?: listOf()
+            } finally {
+                connection.disconnect()
+            }
         }
     }
 
