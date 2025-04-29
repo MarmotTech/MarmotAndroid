@@ -41,7 +41,7 @@ class NativeMessageReceiver {
                     (lock as Object).wait() // 等待 native 代码发送字符串
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
-                    return null
+                    return ""
                 }
             }
             return receivedString

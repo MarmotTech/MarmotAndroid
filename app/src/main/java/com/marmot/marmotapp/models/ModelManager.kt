@@ -39,10 +39,10 @@ class ModelManager @Inject constructor() : ViewModel() {
         .map { it.isNotEmpty() }
 
     suspend fun fetchModels() {
-        Log.d("MRM", "fetchModels called ${this}")
         withContext(Dispatchers.IO) {
             val url = URL("https://conference.cs.cityu.edu.hk/saccps/app/models/models.json")
             val connection = url.openConnection() as HttpURLConnection
+            Log.d("MRM", "Fetch models from ${url}")
             try {
                 connection.requestMethod = "GET"
                 connection.connect()
@@ -52,13 +52,18 @@ class ModelManager @Inject constructor() : ViewModel() {
                 _models.value =
                     Gson().fromJson(response, object : TypeToken<List<ModelInfo>>() {}.type)
                         ?: listOf()
-                Log.d("WTF", "${models}")
             } catch (e: Exception) {
                 e.printStackTrace()
+                Log.d("MRM", "No network, loading models from local file")
                 val metaFile = File(Config.modelPath + "models.json")
-                val content = metaFile.inputStream().bufferedReader().use { it.readText() }
-                _models.value = Gson().fromJson(content, object : TypeToken<List<ModelInfo>>() {}.type)
-                    ?: listOf()
+                try {
+                    val content = metaFile.inputStream().bufferedReader().use { it.readText() }
+                    _models.value = Gson().fromJson(content, object : TypeToken<List<ModelInfo>>() {}.type)
+                        ?: listOf()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.d("MRM", "Local model metafile doesn't exist")
+                }
             } finally {
                 connection.disconnect()
             }

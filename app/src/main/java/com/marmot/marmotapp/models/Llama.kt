@@ -4,9 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
-import kotlin.math.min
 import com.marmot.marmotapp.utils.NativeMessageReceiver
-import com.marmot.marmotapp.utils.getTotalMemory
 
 object LLama {
     var id: Long = 0L
@@ -23,19 +21,6 @@ object LLama {
 
     init {
         System.loadLibrary("llama-jni")
-    }
-
-    fun walkFolder(folderPath: String) {
-        val folder = File(folderPath)
-        val files = folder.listFiles()
-        for (file in files!!) {
-            if (file.isDirectory) {
-                Log.d("debug", "Directory: " + file.absolutePath)
-                walkFolder(file.absolutePath)
-            } else if (file.isFile) {
-                Log.d("debug", "File: " + file.absolutePath + ", size " + file.length())
-            }
-        }
     }
 
     fun initFolder(externalDir: File?) {
@@ -55,7 +40,6 @@ object LLama {
         }
 
         val historyFolder = File(llamaFolder, "history")
-        Log.d("MRM", "modelPath: ${modelFolder.absolutePath}")
         Config.historyPath = historyFolder.absolutePath + "/"
         if (!historyFolder.exists()) {
             historyFolder.mkdirs()
@@ -66,22 +50,10 @@ object LLama {
         if (!dataFolder.exists()) {
             dataFolder.mkdirs()
         }
-    }
-
-    fun hasNoInitialModel(): Boolean {
-        val modelFolder = File(Config.modelPath)
-        if (modelFolder.exists()) {
-            val files = modelFolder.listFiles()
-            for (f in files!!) {
-                if (f.name.endsWith(".gguf")) {
-                    Log.d("debug", "Find initial model " + f.absolutePath)
-                    return false
-                }
-            }
-        } else {
-            Log.d("debug", modelFolder.absolutePath + " does not exist")
-        }
-        return true
+        Log.d("MRM", "Initialize cpp path: ${Config.cppPath}")
+        Log.d("MRM", "Initialize model path: ${Config.modelPath}")
+        Log.d("MRM", "Initialize history path: ${Config.historyPath}")
+        Log.d("MRM", "Initialize data path: ${Config.dataPath}")
     }
 
     private external fun inputString(s: String?)
@@ -145,42 +117,28 @@ object LLama {
     }
 
     fun init(modelInfo: ModelInfo, enablePrefetch: Boolean, listener: ChatListener) {
-        val totalMemory = (getTotalMemory() / Constants.GB).toFloat()
-        val canUseMemory = min(totalMemory.toDouble(), Config.maxMemorySize.toDouble()).toFloat()
-        val modelSize = modelInfo.modelSize.toFloat() / Constants.GB
-
-        var prefetchSizeInGB = 0f
-        var kvCacheSizeInGB = 0f
-        val memSize = 0f
-
-        if (canUseMemory <= modelSize) {
-            prefetchSizeInGB = modelInfo.prefetchSize.toFloat() / Constants.GB
-            kvCacheSizeInGB = modelInfo.kvSize.toFloat() / Constants.GB
-        }
-
-        println(
-                """
-                INIT: ${modelInfo.modelName}
-                path: ${modelInfo.modelLocalPath}
-                prefetch: $enablePrefetch
-                """.trimIndent()
-        )
-        if (true) {
-            println("Start to chat with prefetch")
+        Log.d("MRM", "Start to chat with [${modelInfo.modelName}]")
+        if (enablePrefetch) {
+            Log.d("MRM", "Enable prefetching")
             startChatWPrefetch(
                 msg,
                 Config.modelPath + modelInfo.modelLocalPath,
-                "You are a helpful assistant, please answer my question",
+                modelInfo.systemPrompt,
                 Config.threadNum,
-                1,
-                8F,
-                512
+                1,  // number of threads for prefetching
+                8F, // available memory size
+                512 // context size
             )
         } else {
-            println("Start to chat without prefetch")
-            startChat(msg, Config.modelPath + modelInfo.modelLocalPath, modelInfo.systemPrompt, Config.threadNum)
+            Log.d("MRM", "Disable prefetching")
+            startChat(
+                msg,
+                Config.modelPath + modelInfo.modelLocalPath,
+                modelInfo.systemPrompt,
+                Config.threadNum
+            )
         }
-        println("Start thread to receive new strings")
+
         curThread = Thread {
             while (!Thread.currentThread().isInterrupted) {
                 msg.reset()
@@ -212,7 +170,7 @@ object LLama {
     }
 
     fun destroy() {
-        kill()
+        stop()
         curThread!!.interrupt()
     }
 
