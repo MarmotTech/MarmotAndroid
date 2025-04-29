@@ -7,7 +7,8 @@
     "minMem": 2,
     "prefetchThread": 1,
     "systemPrompt": "You are a friendly chatbot who always responds in the style of a pirate",
-    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"],
+    "logoPath": "https://cdn-avatars.huggingface.co/v1/production/uploads/63565cc56d7fcf1bedb7d347/DRv8Ln7nvK22iXkLmAGb_.png"
   },
   {
     "modelName": "llama-2-7b-chat",
@@ -17,7 +18,8 @@
     "minMem": 2,
     "prefetchThread": 1,
     "systemPrompt": "You are a friendly chatbot who always responds in the style of a pirate",
-    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"],
+    "logoPath": "https://cdn-avatars.huggingface.co/v1/production/uploads/646cf8084eefb026fb8fd8bc/oCTqufkdTkjyGodsx1vo1.png"
   },
   {
     "modelName": "llama-2-13b-chat",
@@ -27,7 +29,8 @@
     "minMem": 2,
     "prefetchThread": 1,
     "systemPrompt": "You are a friendly chatbot who always responds in the style of a pirate",
-    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"],
+    "logoPath": "https://cdn-avatars.huggingface.co/v1/production/uploads/646cf8084eefb026fb8fd8bc/oCTqufkdTkjyGodsx1vo1.png"
   },
   {
     "modelName": "llama-2-70b-chat",
@@ -37,7 +40,8 @@
     "minMem": 2,
     "prefetchThread": 1,
     "systemPrompt": "You are a friendly chatbot who always responds in the style of a pirate",
-    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"],
+    "logoPath": "https://cdn-avatars.huggingface.co/v1/production/uploads/646cf8084eefb026fb8fd8bc/oCTqufkdTkjyGodsx1vo1.png"
   },
   {
     "modelName": "qwen2.5-32b",
@@ -47,6 +51,7 @@
     "minMem": 5,
     "prefetchThread": 1,
     "systemPrompt": "",
-    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"]
+    "tasks": ["perplexity-wikitext2", "perplexity-wikitext103", "squadV2"],
+    "logoPath": "https://cdn-avatars.huggingface.co/v1/production/uploads/620760a26e3b7210c2ff1943/-s1gyJfvbE1RgO5iBeNOi.png"
   }
 ]

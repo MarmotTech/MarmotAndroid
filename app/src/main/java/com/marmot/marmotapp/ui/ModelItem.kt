@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.models.ModelInfo
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun ModelItem(
@@ -51,7 +52,8 @@ fun ModelItem(
                     .background(colorResource(R.color.tertiaryColor))
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.tinyllama_icon),
+//                    painter = painterResource(id = R.drawable.tinyllama_icon),
+                    painter = rememberAsyncImagePainter(modelInfo.logoPath),
                     contentDescription = null,
                     modifier = Modifier
                         .size(32.dp)
