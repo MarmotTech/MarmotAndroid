@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.models.Config
 import com.marmot.marmotapp.models.ModelInfo
-import com.marmot.marmotapp.models.ModelImage
+import com.marmot.marmotapp.ui.ModelImage
 
 
 @Composable

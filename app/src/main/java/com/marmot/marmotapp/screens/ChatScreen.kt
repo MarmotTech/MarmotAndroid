@@ -58,7 +58,7 @@ import com.marmot.marmotapp.models.ChatItem
 import com.marmot.marmotapp.models.ChatItemType
 import com.marmot.marmotapp.models.LLama
 import com.marmot.marmotapp.models.ModelInfo
-import com.marmot.marmotapp.models.ModelImage
+import com.marmot.marmotapp.ui.ModelImage
 import com.marmot.marmotapp.utils.advancedShadow
 
 @Composable

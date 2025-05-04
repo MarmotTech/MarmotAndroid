@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.models.ModelInfo
 import com.marmot.marmotapp.models.ModelManager
-import com.marmot.marmotapp.models.ModelImage
+import com.marmot.marmotapp.ui.ModelImage
 
 @Composable
 fun DownloadsScreen(
