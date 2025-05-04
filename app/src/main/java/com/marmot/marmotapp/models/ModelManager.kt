@@ -1,10 +1,5 @@
 package com.marmot.marmotapp.models
 
-import android.net.ConnectivityManager
-import android.util.Log
-import androidx.lifecycle.ViewModel
-package me.jinheng.cityullm.models
-
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
