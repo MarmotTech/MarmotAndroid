@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.models.Config
 import com.marmot.marmotapp.models.ModelInfo
+import com.marmot.marmotapp.models.ModelImage
 
 
 @Composable
@@ -85,12 +86,10 @@ fun SettingsScreen(
                     .clip(CircleShape)
                     .background(colorResource(R.color.tertiaryColor))
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.tinyllama_icon),
-                    contentDescription = null,
+                ModelImage(
+                    modelInfo = modelInfo,
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(CircleShape)
                 )
             }
 

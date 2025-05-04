@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.models.ModelInfo
 import com.marmot.marmotapp.models.ModelManager
+import com.marmot.marmotapp.models.ModelImage
 
 @Composable
 fun DownloadsScreen(
@@ -152,12 +153,10 @@ fun InstalledModelItem(
                 .clip(CircleShape)
                 .background(colorResource(R.color.tertiaryColor))
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.tinyllama_icon),
-                contentDescription = null,
+            ModelImage(
+                modelInfo = model,
                 modifier = Modifier
                     .size(24.dp)
-                    .clip(CircleShape)
             )
         }
 
@@ -206,12 +205,10 @@ fun MissingModelItem(
                 .clip(CircleShape)
                 .background(colorResource(R.color.tertiaryColor))
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.tinyllama_icon),
-                contentDescription = null,
+            ModelImage(
+                modelInfo = model,
                 modifier = Modifier
                     .size(24.dp)
-                    .clip(CircleShape)
             )
         }
 
