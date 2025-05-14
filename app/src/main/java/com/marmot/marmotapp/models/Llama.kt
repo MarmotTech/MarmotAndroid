@@ -170,6 +170,7 @@ object LLama {
     }
 
     fun destroy() {
+        Log.d("MRM", "Destroy LLama")
         stop()
         curThread!!.interrupt()
     }
