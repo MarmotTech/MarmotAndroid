@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.models.BenchmarkResult
-import com.marmot.marmotapp.models.LLama
+import com.marmot.marmotapp.models.Llama
 import com.marmot.marmotapp.models.ModelInfo
 import com.marmot.marmotapp.models.ModelManager
 
@@ -222,7 +222,7 @@ fun BenchmarkBottomSheet(
                         enabled = selectedTasks.isNotEmpty(),
                         onClick = {
                             isRunning = true
-                            LLama.startBenchmark(
+                            Llama.startBenchmark(
                                 models = selectedModels.map { it.modelLocalPath }.toTypedArray(),
                                 tasks = selectedTasks.toTypedArray(),
                                 onFinished = onComplete

@@ -1,7 +1,6 @@
 package com.marmot.marmotapp.screens
 
 import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,12 +50,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.marmot.marmotapp.ChatActivity
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.SettingsActivity
 import com.marmot.marmotapp.models.ChatItem
 import com.marmot.marmotapp.models.ChatItemType
-import com.marmot.marmotapp.models.LLama
+import com.marmot.marmotapp.models.Llama
 import com.marmot.marmotapp.models.ModelInfo
 import com.marmot.marmotapp.ui.ModelImage
 import com.marmot.marmotapp.utils.advancedShadow
@@ -70,10 +68,10 @@ fun ChatScreen(modelInfo: ModelInfo) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
-        LLama.init(
+        Llama.init(
             modelInfo,
             true,
-            object: LLama.ChatListener {
+            object: Llama.ChatListener {
                 override fun onUpdateInfo(s: String) {
                     println(s)
                 }
@@ -259,7 +257,7 @@ fun ChatScreen(modelInfo: ModelInfo) {
                                 text = ""
                             )
                         )
-                        LLama.run(textValue)
+                        Llama.run(textValue)
                         textValue = ""
                         keyboardController?.hide()
                     },
@@ -284,7 +282,7 @@ fun ChatScreen(modelInfo: ModelInfo) {
 
     DisposableEffect(Unit) {
         onDispose {
-            LLama.destroy()
+            Llama.destroy()
         }
     }
 }

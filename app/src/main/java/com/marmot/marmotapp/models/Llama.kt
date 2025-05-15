@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken
 import java.io.File
 import com.marmot.marmotapp.utils.NativeMessageReceiver
 
-object LLama {
+object Llama {
     var id: Long = 0L
 
     var answering: Boolean = false
@@ -21,6 +21,50 @@ object LLama {
 
     init {
         System.loadLibrary("llama-jni")
+    }
+
+    private external fun inputString(s: String?)
+
+    private external fun startChat(
+            msg: NativeMessageReceiver?,
+            localModelPath: String?,
+            systemPrompt: String?,
+            threadNum: Int
+    )
+
+    private external fun benchmark(
+        msg: NativeMessageReceiver?,
+        localModelPath: Array<String>,
+        threadNum: Int,
+        promptLength: Int,
+        generationSize: Int,
+        tasks: Array<String>
+    )
+
+    private external fun startChatWPrefetch(
+            msg: NativeMessageReceiver,
+            localModelPath: String,
+            systemPrompt: String,
+            threadNum: Int,
+            prefetchThreadNum: Int,
+            lSize: Float,
+            contextSize: Int
+    )
+
+    private external fun stop()
+
+    private external fun kill()
+
+    fun hasInitialModels():Boolean {
+        val modelFolder = File(Config.modelPath!!)
+        for (file in modelFolder.listFiles()!!) {
+            if (file.isFile && file.name.endsWith(".gguf")) {
+                Log.d("MRM", "Found initial model: ${file.name}")
+                return false
+            }
+        }
+        Log.d("MRM", "No initial model found")
+        return true
     }
 
     fun initFolder(externalDir: File?) {
@@ -56,47 +100,17 @@ object LLama {
         Log.d("MRM", "Initialize data path: ${Config.dataPath}")
     }
 
-    private external fun inputString(s: String?)
-
-    private external fun startChat(
-            msg: NativeMessageReceiver?,
-            localModelPath: String?,
-            systemPrompt: String?,
-            threadNum: Int
-    )
-
-    private external fun benchmark(
-        msg: NativeMessageReceiver?,
-        localModelPath: Array<String>,
-        threadNum: Int,
-        promptLength: Int,
-        generationSize: Int,
-        tasks: Array<String>
-    )
-
-    private external fun startChatWPrefetch(
-            msg: NativeMessageReceiver,
-            localModelPath: String,
-            systemPrompt: String,
-            threadNum: Int,
-            prefetchThreadNum: Int,
-            lSize: Float,
-            contextSize: Int
-    )
-
-    private external fun stop()
-
-    private external fun kill()
-
     fun startBenchmark(
         models: Array<String>,
         tasks: Array<String>,
         onFinished: (List<BenchmarkResult>) -> Unit
     ) {
+        val taskSet = setOf(tasks)
+        for (task in taskSet) {
+            Log.d("MRM", "Start benchmark task: $task")
+        }
         curThread = Thread {
             msg.reset()
-
-            println("started")
 
             benchmark(
                 msg,

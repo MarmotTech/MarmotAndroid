@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.marmot.marmotapp.models.LLama
+import com.marmot.marmotapp.models.Llama
 import dagger.hilt.android.AndroidEntryPoint
 import com.marmot.marmotapp.models.ModelManager
 import com.marmot.marmotapp.screens.ChatScreen
@@ -31,7 +31,7 @@ class ChatActivity: ComponentActivity() {
     }
 
     override fun onDestroy() {
-        LLama.destroy()
+        Llama.destroy()
         super.onDestroy()
     }
 }
