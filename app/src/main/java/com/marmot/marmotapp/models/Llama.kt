@@ -109,6 +109,7 @@ object Llama {
         for (task in taskSet) {
             Log.d("MRM", "Start benchmark task: $task")
         }
+        // TODO: we need to check the dataset of each task. If some dataset doesn't exists, we need to download it from the server.
         curThread = Thread {
             msg.reset()
 
