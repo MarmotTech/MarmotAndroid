@@ -113,6 +113,7 @@ object Llama {
         curThread = Thread {
             msg.reset()
 
+            // TODO: this should be modified to pass the dataset path to the backend, Shangyu will do it.
             benchmark(
                 msg,
                 models,
