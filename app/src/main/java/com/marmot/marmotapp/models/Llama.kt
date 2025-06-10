@@ -120,7 +120,8 @@ object Llama {
                 Config.threadNum,
                 Config.benchmarkPromptLength,
                 Config.benchmarkGenerationSize,
-                tasks
+                tasks,
+                dataset_path_list // TODO: this should be a list with the same size of tasks, each element is the path to the dataset of each task.
             )
             val s: String = msg.waitForString()!!
 
