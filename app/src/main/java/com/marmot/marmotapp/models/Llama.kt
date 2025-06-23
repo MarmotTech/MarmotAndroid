@@ -84,6 +84,27 @@ object LLama {
             contextSize: Int
     )
 
+    private external fun resumeChat(
+        msg: NativeMessageReceiver,
+        localModelPath: String?,
+        systemPrompt: String?,
+        threadNum: Int,
+        historyFilePath: String?,
+        chatTemplate: String?
+    )
+
+    private external fun resumeChatWPrefetch(
+        msg: NativeMessageReceiver,
+        localModelPath: String,
+        systemPrompt: String,
+        threadNum: Int,
+        historyFilePath: String?,
+        chatTemplate: String?,
+        prefetchThreadNum: Int,
+        lSize: Float,
+        contextSize: Int
+    )
+
     private external fun stop()
 
     private external fun kill()

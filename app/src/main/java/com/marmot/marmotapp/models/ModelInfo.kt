@@ -21,6 +21,8 @@ class ModelInfo {
 
     var logoPath: String
 
+    var chatTemplate: String
+
     constructor(
         modelName: String,
         modelUrl: String,
@@ -30,7 +32,8 @@ class ModelInfo {
         prefetchSize: Long,
         systemPrompt: String,
         tasks: ArrayList<String>?,
-        logoPath: String
+        logoPath: String,
+        chatTemplate: String
     ) {
         this.modelName = modelName
         this.modelUrl = modelUrl
@@ -41,5 +44,6 @@ class ModelInfo {
         this.systemPrompt = systemPrompt
         this.tasks = tasks
         this.logoPath = logoPath
+        this.chatTemplate = chatTemplate
     }
 }
