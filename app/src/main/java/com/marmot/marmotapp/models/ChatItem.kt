@@ -1,18 +1,26 @@
 package com.marmot.marmotapp.models
 
+import com.google.gson.annotations.SerializedName
+
 enum class ChatItemType {
+    @SerializedName("user")
     UserMessage,
-    BotMessage
+    
+    @SerializedName("assistant")
+    AssistantMessage
 }
 
-class ChatItem(
-    val type: ChatItemType,
-    val text: String
+data class ChatItem(
+    @SerializedName("role")
+    val role: ChatItemType,
+    
+    @SerializedName("content")
+    val content: String
 ) {
     fun appendText(text: String): ChatItem {
         return ChatItem(
-            type = type,
-            text = this.text + text
+            role = role,
+            content = this.content + text
         )
     }
 }

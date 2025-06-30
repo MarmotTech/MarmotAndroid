@@ -81,7 +81,8 @@ fun ModelItemPreview() {
             systemPrompt = "",
             kvSize = 0,
             tasks = null,
-            logoPath = ""
+            logoPath = "",
+            chatTemplate = ""
         ),
         onClick = {}
     )

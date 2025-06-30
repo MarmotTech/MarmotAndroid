@@ -137,27 +137,62 @@ object LLama {
         curThread!!.start()
     }
 
-    fun init(modelInfo: ModelInfo, enablePrefetch: Boolean, listener: ChatListener) {
+    fun init(
+        modelInfo: ModelInfo,
+        chatHistory: ChatHistory,
+        enablePrefetch: Boolean,
+        listener: ChatListener
+    ) {
         Log.d("MRM", "Start to chat with [${modelInfo.modelName}]")
         if (enablePrefetch) {
             Log.d("MRM", "Enable prefetching")
-            startChatWPrefetch(
-                msg,
-                Config.modelPath + modelInfo.modelLocalPath,
-                modelInfo.systemPrompt,
-                Config.threadNum,
-                1,  // number of threads for prefetching
-                8F, // available memory size
-                512 // context size
-            )
+
+            if (chatHistory.history.isEmpty()) {
+                startChatWPrefetch(
+                    msg,
+                    Config.modelPath + modelInfo.modelLocalPath,
+                    modelInfo.systemPrompt,
+                    Config.threadNum,
+                    1,  // number of threads for prefetching
+                    8F, // available memory size
+                    512 // context size
+                )
+            } else {
+                Log.d("MRM", "Resume chat from ${chatHistory.getHistoryPath()}")
+                resumeChatWPrefetch(
+                    msg,
+                    Config.modelPath + modelInfo.modelLocalPath,
+                    modelInfo.systemPrompt,
+                    Config.threadNum,
+                    chatHistory.getHistoryPath(),
+                    modelInfo.chatTemplate,
+                    1,
+                    8F,
+                    512
+                )
+            }
         } else {
             Log.d("MRM", "Disable prefetching")
-            startChat(
-                msg,
-                Config.modelPath + modelInfo.modelLocalPath,
-                modelInfo.systemPrompt,
-                Config.threadNum
-            )
+
+            if (chatHistory.history.isEmpty()) {
+                startChat(
+                    msg,
+                    Config.modelPath + modelInfo.modelLocalPath,
+                    modelInfo.systemPrompt,
+                    Config.threadNum
+                )
+            } else {
+                Log.d("MRM", "Resume chat from ${chatHistory.getHistoryPath()}")
+
+                resumeChat(
+                    msg,
+                    Config.modelPath + modelInfo.modelLocalPath,
+                    modelInfo.systemPrompt,
+                    Config.threadNum,
+                    chatHistory.getHistoryPath(),
+                    modelInfo.chatTemplate,
+                )
+            }
         }
 
         curThread = Thread {

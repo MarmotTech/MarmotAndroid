@@ -96,9 +96,13 @@ class ModelManager @Inject constructor() : ViewModel() {
         }
     }
 
-    fun getModelByName(name: String): ModelInfo {
-        return models.value.first {
-            it.modelName == name
+    fun getModelByName(name: String): ModelInfo? {
+        return try {
+            models.value.first {
+                it.modelName == name
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 

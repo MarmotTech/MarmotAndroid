@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,9 +35,11 @@ import androidx.compose.ui.unit.sp
 import com.marmot.marmotapp.ChatActivity
 import com.marmot.marmotapp.DownloadsActivity
 import com.marmot.marmotapp.R
+import com.marmot.marmotapp.models.ChatHistory
 import com.marmot.marmotapp.models.ModelManager
-import com.marmot.marmotapp.ui.NoChatsPlaceholder
+import com.marmot.marmotapp.ui.ChatHistoryItem
 import com.marmot.marmotapp.ui.ModelItem
+import com.marmot.marmotapp.ui.NoChatsPlaceholder
 
 @Composable
 fun ModelsScreen(
@@ -112,12 +116,48 @@ fun ModelsScreen(
             color = colorResource(R.color.tertiaryColor),
             thickness = 2.dp
         )
-
-        NoChatsPlaceholder(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-        )
+        
+        val chatSummaries = remember { ChatHistory.getAllChatSummaries(context) }
+        
+        if (chatSummaries.isEmpty()) {
+            NoChatsPlaceholder(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                Text(
+                    "Recent Chats",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+                
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    items(chatSummaries) { chatSummary ->
+                        val modelInfo = modelManager.getModelByName(chatSummary.modelName)
+                        ChatHistoryItem(
+                            chatSummary = chatSummary,
+                            modelInfo = modelInfo,
+                            onClick = {
+                                val intent = Intent(context, ChatActivity::class.java)
+                                intent.putExtra("chatId", chatSummary.id)
+                                context.startActivity(intent)
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

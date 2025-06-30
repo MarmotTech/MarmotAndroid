@@ -25,7 +25,7 @@ class SettingsActivity: ComponentActivity() {
 
         setContent {
             SettingsScreen(
-                modelInfo = modelInfo
+                modelInfo = modelInfo!!
             )
         }
     }

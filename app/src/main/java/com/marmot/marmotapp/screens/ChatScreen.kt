@@ -1,7 +1,6 @@
 package com.marmot.marmotapp.screens
 
 import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,9 +50,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.marmot.marmotapp.ChatActivity
 import com.marmot.marmotapp.R
 import com.marmot.marmotapp.SettingsActivity
+import com.marmot.marmotapp.models.ChatHistory
 import com.marmot.marmotapp.models.ChatItem
 import com.marmot.marmotapp.models.ChatItemType
 import com.marmot.marmotapp.models.LLama
@@ -62,16 +61,22 @@ import com.marmot.marmotapp.ui.ModelImage
 import com.marmot.marmotapp.utils.advancedShadow
 
 @Composable
-fun ChatScreen(modelInfo: ModelInfo) {
+fun ChatScreen(modelInfo: ModelInfo, chatHistoryId: String? = null) {
     val context = LocalContext.current
     var textValue by remember { mutableStateOf("") }
-    val history = remember { mutableStateListOf<ChatItem>() }
-    val scrollState = rememberScrollState()
+    val chatHistory = remember { 
+        if (chatHistoryId != null) {
+            ChatHistory.getById(context, chatHistoryId) ?: ChatHistory.create(context, modelInfo.modelName)
+        } else {
+            ChatHistory.create(context, modelInfo.modelName)
+        }
+    }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
         LLama.init(
             modelInfo,
+            chatHistory,
             true,
             object: LLama.ChatListener {
                 override fun onUpdateInfo(s: String) {
@@ -79,7 +84,8 @@ fun ChatScreen(modelInfo: ModelInfo) {
                 }
 
                 override fun onBotContinue(s: String) {
-                    history[history.size - 1] = history[history.size - 1].appendText(s)
+                    val lastItem = chatHistory.history.last().appendText(s)
+                    chatHistory.updateLastItem(lastItem)
                 }
             }
         )
@@ -163,20 +169,20 @@ fun ChatScreen(modelInfo: ModelInfo) {
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                history.reversed().forEach {
+                chatHistory.history.reversed().forEach {
                     item {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentWidth(
-                                    if (it.type == ChatItemType.BotMessage) Alignment.Start else Alignment.End
+                                    if (it.role == ChatItemType.AssistantMessage) Alignment.Start else Alignment.End
                                 )
                         ) {
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(24.dp))
                                     .background(
-                                        if (it.type == ChatItemType.BotMessage) Color.White else colorResource(
+                                        if (it.role == ChatItemType.AssistantMessage) Color.White else colorResource(
                                             R.color.mainColor
                                         )
                                     )
@@ -184,10 +190,10 @@ fun ChatScreen(modelInfo: ModelInfo) {
                                     .widthIn(0.dp, 260.dp)
                             ) {
                                 Text(
-                                    it.text,
+                                    it.content,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = if (it.type == ChatItemType.BotMessage) Color.Black else Color.White
+                                    color = if (it.role == ChatItemType.AssistantMessage) Color.Black else Color.White
                                 )
                             }
                         }
@@ -247,16 +253,16 @@ fun ChatScreen(modelInfo: ModelInfo) {
 
                 Button (
                     onClick = {
-                        history.add(
+                        chatHistory.addItem(
                             ChatItem(
-                                type = ChatItemType.UserMessage,
-                                text = textValue
+                                role = ChatItemType.UserMessage,
+                                content = textValue
                             )
                         )
-                        history.add(
+                        chatHistory.addItem(
                             ChatItem(
-                                type = ChatItemType.BotMessage,
-                                text = ""
+                                role = ChatItemType.AssistantMessage,
+                                content = ""
                             )
                         )
                         LLama.run(textValue)
@@ -302,7 +308,9 @@ fun ChatScreenPreview() {
             systemPrompt = "",
             kvSize = 0,
             tasks = null,
-            logoPath = ""
-        )
+            logoPath = "",
+            chatTemplate = ""
+        ),
+        chatHistoryId = null
     )
 }
