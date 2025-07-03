@@ -1,5 +1,6 @@
 package com.marmot.marmotapp.screens
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,12 +10,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,8 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
 import com.marmot.marmotapp.R
+import com.marmot.marmotapp.SettingsActivity
 import com.marmot.marmotapp.models.ModelInfo
 import com.marmot.marmotapp.models.ModelManager
 import com.marmot.marmotapp.ui.ModelImage
@@ -141,6 +146,7 @@ fun InstalledModelItem(
     onUpdate: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -167,6 +173,20 @@ fun InstalledModelItem(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
+
+        IconButton(
+            onClick = {
+                val intent = Intent(context, SettingsActivity::class.java)
+                intent.putExtra("modelName", model.modelName)
+                context.startActivity(intent)
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = "Settings",
+                tint = colorResource(R.color.mainColor)
+            )
+        }
 
         IconButton(
             onClick = {
@@ -216,7 +236,6 @@ fun MissingModelItem(
 
         Text(
             text = model.modelName,
-            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
 
@@ -232,7 +251,7 @@ fun MissingModelItem(
             Icon(
                 imageVector = Icons.Filled.ArrowDownward,
                 contentDescription = "Download Icon",
-                tint = MaterialTheme.colorScheme.primary
+                tint = colorResource(R.color.mainColor)
             )
         }
     }

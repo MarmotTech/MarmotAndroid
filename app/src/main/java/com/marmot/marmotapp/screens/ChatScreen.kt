@@ -126,29 +126,6 @@ fun ChatScreen(modelInfo: ModelInfo, chatHistoryId: String? = null) {
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
-
-            Button(
-                modifier = Modifier
-                    .size(width = 32.dp, height = 32.dp),
-                contentPadding = PaddingValues(0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent
-                ),
-                onClick = {
-                    val intent = Intent(context, SettingsActivity::class.java)
-                    intent.putExtra("modelName", modelInfo.modelName)
-
-                    context.startActivity(intent)
-                }
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(24.dp, 24.dp),
-                    imageVector = Icons.Outlined.Settings,
-                    contentDescription = "",
-                    tint = Color.Black
-                )
-            }
         }
 
         Box(
