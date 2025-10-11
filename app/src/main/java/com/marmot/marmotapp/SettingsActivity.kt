@@ -18,14 +18,11 @@ class SettingsActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val modelName = intent.getStringExtra("modelName")!!
-        val modelInfo = modelManager.getModelByName(modelName)
-
         enableEdgeToEdge()
 
         setContent {
             SettingsScreen(
-                modelInfo = modelInfo!!
+                onNavigateBack = { finish() }
             )
         }
     }

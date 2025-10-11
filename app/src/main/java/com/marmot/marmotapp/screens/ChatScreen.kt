@@ -178,9 +178,38 @@ fun ChatScreen(modelInfo: ModelInfo, chatHistoryId: String? = null) {
                 }
             }
 
+            // Typing indicator
+            val isTyping = chatHistory.history.isNotEmpty() &&
+                          chatHistory.history.last().role == ChatItemType.AssistantMessage &&
+                          chatHistory.history.last().content.isEmpty()
+
+            if (isTyping) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 16.dp, bottom = 82.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    repeat(3) { index ->
+                        Box(
+                            modifier = Modifier
+                                .size(4.dp)
+                                .background(colorResource(R.color.mainColor), CircleShape)
+                        )
+                    }
+                    Text(
+                        text = "AI is typing...",
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
+
             Row(
                 Modifier
-                    .padding(32.dp)
+                    .padding(16.dp)
                     .imePadding()
                     .advancedShadow(
                         color = Color.Black,
