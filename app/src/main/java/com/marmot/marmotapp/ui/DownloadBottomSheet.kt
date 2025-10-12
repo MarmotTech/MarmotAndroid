@@ -1,16 +1,21 @@
 package com.marmot.marmotapp.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetDefaults
@@ -66,7 +71,7 @@ fun DownloadBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Download Model",
+                "Get Started with AI Models",
                 modifier = Modifier
                     .padding(bottom = 8.dp),
                 fontSize = 24.sp,
@@ -74,7 +79,7 @@ fun DownloadBottomSheet(
             )
 
             Text(
-                "Could not find model in local, download tinyllama-1.1b-chat-v1.0 and have a try",
+                "Download TinyLlama-1.1B model to start chatting, or skip and download later from the models menu",
                 modifier = Modifier
                     .padding(
                         bottom = 32.dp,
@@ -82,39 +87,75 @@ fun DownloadBottomSheet(
                         end = 8.dp
                     ),
                 textAlign = TextAlign.Center,
-                fontSize = 12.sp,
+                fontSize = 14.sp,
+                color = Color.Gray
             )
 
             if (isDownloading) {
                 LinearProgressIndicator(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
                     progress = {
                         downloadProgress.toFloat() / 100f
                     },
                     color = colorResource(R.color.mainColor)
                 )
+
+                Text(
+                    "Downloading models...",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
             } else {
-                Button(
-                    modifier = Modifier
-                        .height(54.dp)
-                        .fillMaxWidth(),
-                    onClick = {
-                        coroutineScope.launch {
-                            modelManager.downloadModels(
-                                modelManager.missingModels().subList(0, 2)
-                            )
-                            onComplete()
-                        }
-                    },
-                    shape = RoundedCornerShape(24.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(R.color.mainColor),
-                    )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        "Download"
-                    )
+                    // Skip button
+                    OutlinedButton(
+                        modifier = Modifier
+                            .height(54.dp)
+                            .weight(1f),
+                        onClick = {
+                            onComplete()
+                        },
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = colorResource(R.color.secondaryColor)
+                        )
+                    ) {
+                        Text(
+                            "Skip for Now",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+                    // Download button
+                    Button(
+                        modifier = Modifier
+                            .height(54.dp)
+                            .weight(1f),
+                        onClick = {
+                            coroutineScope.launch {
+                                modelManager.downloadModels(
+                                    modelManager.missingModels().subList(0, 2)
+                                )
+                                onComplete()
+                            }
+                        },
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.mainColor),
+                        )
+                    ) {
+                        Text(
+                            "Download",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
             }
         }
